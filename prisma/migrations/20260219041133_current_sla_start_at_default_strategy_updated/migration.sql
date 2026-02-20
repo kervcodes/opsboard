@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Incident" ALTER COLUMN "currentSlaStartAt" SET DEFAULT CURRENT_TIMESTAMP;
