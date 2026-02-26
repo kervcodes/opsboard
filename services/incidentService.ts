@@ -1,5 +1,12 @@
 import { prisma } from "@/lib/prisma";
-import { Severity, Status } from "@/generated/prisma";
+import { CommentType, Severity, Status, Role } from "@/generated/prisma";
+
+function buildStatusMessage(from: Status, to: Status) {
+    if ((from === Status.RESOLVED || from === Status.CLOSED) && to === Status.INVESTIGATING) {
+        return `Incident reopened (from ${from} to ${to})`;
+    }
+    return `Status changed from ${from} to ${to}`;
+}
 
 
 type CreateIncidentInput = {
@@ -49,12 +56,23 @@ export const createIncident = async (input: CreateIncidentInput) => {
 
 
 export const updateStatus = async (input: UpdateStatusInput) => {
+    const now = new Date();
+    
     const incident = await prisma.incident.findUnique({
         where: { id: input.incidentId },
     })
 
     if (!incident) {
         throw new Error(`Incident not found!`)
+    }
+    const user = await prisma.user.findUnique({
+        where: {
+            id: input.userId
+        }
+    })
+
+    if (!user) {
+        throw new Error(`User not found!`);
     }
 
     const currentStatus = incident.status;
@@ -65,10 +83,14 @@ export const updateStatus = async (input: UpdateStatusInput) => {
     let closedAt = incident.closedAt;
     let currentSlaStartAt = incident.currentSlaStartAt;
 
+    if (user.role !== Role.ADMIN && user.id !== incident.ownerId) {
+        throw new Error("Unauthorized: Only owner or admin can change status");
+    }
+
     switch(currentStatus) {
         case Status.OPEN:
             if (newStatus === Status.INVESTIGATING) {
-                acknowledgedAt = new Date();
+                acknowledgedAt = now;
             } else if (newStatus === Status.DISCARDED) {
                 // nothing happened here
             } else {
@@ -93,16 +115,16 @@ export const updateStatus = async (input: UpdateStatusInput) => {
             break;
         case Status.MITIGATED:
             if (newStatus === Status.RESOLVED) {
-                resolvedAt = new Date();
+                resolvedAt = now;
             } else {
                 throw new Error(`Invalid transistion from MITIGATED to ${newStatus}`);
             }
             break;
         case Status.RESOLVED:
             if (newStatus === Status.CLOSED) {
-                closedAt = new Date();
+                closedAt = now;
             } else if(newStatus === Status.INVESTIGATING) {
-                currentSlaStartAt = new Date()
+                currentSlaStartAt = now;
                 acknowledgedAt = null;
                 resolvedAt = null;
                 closedAt = null;
@@ -112,7 +134,7 @@ export const updateStatus = async (input: UpdateStatusInput) => {
             break;
         case Status.CLOSED:
             if (newStatus === Status.INVESTIGATING) {
-                currentSlaStartAt = new Date()
+                currentSlaStartAt = now;
                 acknowledgedAt = null;
                 resolvedAt = null;
                 closedAt = null;
@@ -128,17 +150,32 @@ export const updateStatus = async (input: UpdateStatusInput) => {
 
     }
 
-    const updatedIncident = await prisma.incident.update({
-        where: { id: incident.id },
-        data: {
-        status: newStatus,
-        acknowledgedAt,
-        resolvedAt,
-        closedAt,
-        currentSlaStartAt,
-        },
-    });
+    const message = buildStatusMessage(currentStatus, newStatus);
 
+    const [updatedIncident] = await prisma.$transaction([
+        prisma.incident.update({
+            where: { 
+                id: incident.id,
+                version: incident.version,
+            },
+            data: {
+            status: newStatus,
+            acknowledgedAt,
+            resolvedAt,
+            closedAt,
+            currentSlaStartAt,
+            version: { increment: 1 },
+            },
+        }),
+
+        prisma.comment.create({
+            data: {
+                incidentId: incident.id,
+                authorId: input.userId,
+                message,
+                type: CommentType.SYSTEM_EVENT,
+            },
+        }),
+    ]);   
     return updatedIncident;
-    
 }

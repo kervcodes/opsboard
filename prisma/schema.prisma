@@ -15,11 +15,12 @@ datasource db {
 
 // User model
 model User {
-  id        String   @id @default(uuid())
+  id        String          @id @default(uuid())
   name      String?
-  email     String   @unique
-  role      Role     @default(MEMBER)
-  createdAt DateTime @default(now())
+  email     String          @unique
+  role      Role            @default(MEMBER)
+  createdAt DateTime        @default(now())
+  actor     IncidentEvent[]
 
   createdIncidents Incident[] @relation("IncidentCreator")
   ownedIncidents   Incident[] @relation("IncidentOwner")
@@ -28,54 +29,40 @@ model User {
 
 // Comment model
 model Comment {
-  id String @id @default(uuid())
-
+  id         String   @id @default(uuid())
   incidentId String
-  incident   Incident @relation("IncidentComments", fields: [incidentId], references: [id], onDelete: Cascade)
+  incident   Incident @relation(fields: [incidentId], references: [id])
 
   authorId String
   author   User   @relation("CommentAuthor", fields: [authorId], references: [id])
 
   message String
-  type    CommentType @default(SYSTEM_EVENT)
 
-  createdAt DateTime  @default(now())
-  editedAt  DateTime?
-  isEdited  Boolean   @default(false)
-
-  @@index([incidentId])
+  createdAt DateTime @default(now())
 }
 
 // Incident model
 model Incident {
-  id          String   @id @default(uuid())
+  id          String @id @default(uuid())
   title       String
   description String
-  severity    Severity
-  status      Status   @default(OPEN)
 
-  slaTargetMinutes  Int?
-  currentSlaStartAt DateTime @default(now())
+  severity Severity?
+  status   Status    @default(OPEN)
 
   ownerId String
   owner   User   @relation("IncidentOwner", fields: [ownerId], references: [id])
+
   createdById String
   createdBy   User   @relation("IncidentCreator", fields: [createdById], references: [id])
 
-  acknowledgedAt DateTime?
-  resolvedAt     DateTime?
-  closedAt       DateTime?
+  comments Comment[]
+  events   IncidentEvent[]
 
   version Int @default(1)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  comments Comment[] @relation("IncidentComments")
-
-  @@index([status])
-  @@index([severity])
-  @@index([ownerId])
 }
 
 enum Role {
@@ -101,6 +88,26 @@ enum Severity {
 }
 
 enum CommentType {
-  SYSTEM_EVENT
   USER_UPDATE
+  SYSTEM_EVENT
+}
+
+enum EventType {
+  STATUS_CHANGED
+  SEVERITY_CHANGED
+  OWNER_CHANGED
+}
+
+model IncidentEvent {
+  id         String   @id @default(uuid())
+  incidentId String
+  incident   Incident @relation(fields: [incidentId], references: [id])
+
+  actorId String?
+  actor   User?   @relation(fields: [actorId], references: [id])
+
+  eventType EventType
+  metadata  Json
+
+  createdAt DateTime @default(now())
 }
