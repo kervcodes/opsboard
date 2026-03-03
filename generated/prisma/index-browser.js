@@ -122,10 +122,7 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  name: 'name',
-  email: 'email',
-  role: 'role',
-  createdAt: 'createdAt'
+  role: 'role'
 };
 
 exports.Prisma.CommentScalarFieldEnum = {
@@ -133,10 +130,7 @@ exports.Prisma.CommentScalarFieldEnum = {
   incidentId: 'incidentId',
   authorId: 'authorId',
   message: 'message',
-  type: 'type',
-  createdAt: 'createdAt',
-  editedAt: 'editedAt',
-  isEdited: 'isEdited'
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.IncidentScalarFieldEnum = {
@@ -145,21 +139,34 @@ exports.Prisma.IncidentScalarFieldEnum = {
   description: 'description',
   severity: 'severity',
   status: 'status',
-  slaTargetMinutes: 'slaTargetMinutes',
-  currentSlaStartAt: 'currentSlaStartAt',
-  ownerId: 'ownerId',
-  createdById: 'createdById',
   acknowledgedAt: 'acknowledgedAt',
   resolvedAt: 'resolvedAt',
   closedAt: 'closedAt',
+  currentSlaStartAt: 'currentSlaStartAt',
+  slaTargetMinutes: 'slaTargetMinutes',
+  ownerId: 'ownerId',
+  createdById: 'createdById',
   version: 'version',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.IncidentEventScalarFieldEnum = {
+  id: 'id',
+  incidentId: 'incidentId',
+  actorId: 'actorId',
+  eventType: 'eventType',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -171,14 +178,15 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
 exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN',
   MEMBER: 'MEMBER'
-};
-
-exports.CommentType = exports.$Enums.CommentType = {
-  SYSTEM_EVENT: 'SYSTEM_EVENT',
-  USER_UPDATE: 'USER_UPDATE'
 };
 
 exports.Severity = exports.$Enums.Severity = {
@@ -198,10 +206,18 @@ exports.Status = exports.$Enums.Status = {
   DISCARDED: 'DISCARDED'
 };
 
+exports.EventType = exports.$Enums.EventType = {
+  INCIDENT_CREATED: 'INCIDENT_CREATED',
+  STATUS_CHANGED: 'STATUS_CHANGED',
+  SEVERITY_CHANGED: 'SEVERITY_CHANGED',
+  OWNER_CHANGED: 'OWNER_CHANGED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Comment: 'Comment',
-  Incident: 'Incident'
+  Incident: 'Incident',
+  IncidentEvent: 'IncidentEvent'
 };
 
 /**

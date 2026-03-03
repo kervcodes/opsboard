@@ -15,16 +15,13 @@ datasource db {
 
 // User model
 model User {
-  id        String          @id @default(uuid())
-  name      String?
-  email     String          @unique
-  role      Role            @default(MEMBER)
-  createdAt DateTime        @default(now())
-  actor     IncidentEvent[]
+  id String @id @default(uuid())
+  role      Role      @default(MEMBER)
+  ownedIncidents      Incident[]      @relation("IncidentOwner")
+  createdIncidents    Incident[]      @relation("IncidentCreator")
+  actedIncidentEvents IncidentEvent[] @relation("IncidentEventActor")
 
-  createdIncidents Incident[] @relation("IncidentCreator")
-  ownedIncidents   Incident[] @relation("IncidentOwner")
-  comments         Comment[]  @relation("CommentAuthor")
+  comments Comment[] @relation("CommentAuthor")
 }
 
 // Comment model
@@ -43,15 +40,22 @@ model Comment {
 
 // Incident model
 model Incident {
-  id          String @id @default(uuid())
+  id String @id @default(uuid())
+
   title       String
   description String
 
-  severity Severity?
-  status   Status    @default(OPEN)
+  severity    Severity?
+  status      Status     @default(OPEN)
 
-  ownerId String
-  owner   User   @relation("IncidentOwner", fields: [ownerId], references: [id])
+  acknowledgedAt    DateTime?
+  resolvedAt        DateTime?
+  closedAt          DateTime?
+  currentSlaStartAt DateTime
+  slaTargetMinutes  Int?
+
+  ownerId     String
+  owner       User   @relation("IncidentOwner", fields: [ownerId], references: [id])
 
   createdById String
   createdBy   User   @relation("IncidentCreator", fields: [createdById], references: [id])
@@ -59,7 +63,7 @@ model Incident {
   comments Comment[]
   events   IncidentEvent[]
 
-  version Int @default(1)
+  version  Int       @default(1)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -93,18 +97,20 @@ enum CommentType {
 }
 
 enum EventType {
+  INCIDENT_CREATED
   STATUS_CHANGED
   SEVERITY_CHANGED
   OWNER_CHANGED
 }
 
 model IncidentEvent {
-  id         String   @id @default(uuid())
+  id String @id @default(uuid())
+
   incidentId String
   incident   Incident @relation(fields: [incidentId], references: [id])
 
   actorId String?
-  actor   User?   @relation(fields: [actorId], references: [id])
+  actor   User?   @relation("IncidentEventActor", fields: [actorId], references: [id])
 
   eventType EventType
   metadata  Json

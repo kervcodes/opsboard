@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { CommentType, Severity, Status, Role } from "@/generated/prisma";
+import { EventType, Severity, Status, Role } from "@/generated/prisma";
 
 function buildStatusMessage(from: Status, to: Status) {
     if ((from === Status.RESOLVED || from === Status.CLOSED) && to === Status.INVESTIGATING) {
@@ -30,28 +30,37 @@ const SLA_MAP: Record<Severity, number> = {
     CRITICAL: 15,
 };
 
+
+
 export const createIncident = async (input: CreateIncidentInput) => {
-    const slaMinutes = SLA_MAP[input.severity];
+    const now = new Date();
 
-    if (!slaMinutes) {
-        throw new Error('Invalid severity');
-    }
+    return await prisma.$transaction(async (tx) => {
+        const incident = await tx.incident.create({
+            data: {
+                title: input.title,
+                description: input.description,
+                severity: input.severity ?? null,
+                status: Status.OPEN,
+                currentSlaStartAt: now,
+                ownerId: input.ownerId ?? input.createdById,
+                createdById: input.createdById
+            },
+        });
 
-    const incident = await prisma.incident.create({
-        data: {
-            title: input.title,
-            description: input.description,
-            severity: input.severity,
-            status: Status.OPEN,
-            slaTargetMinutes: slaMinutes,
-            currentSlaStartAt: new Date(),
-            ownerId: input.ownerId ?? input.createdById,
-            createdById: input.createdById,
-        },
+        await tx.incidentEvent.create({
+            data: {
+                incidentId: incident.id,
+                actorId: input.createdById,
+                eventType: EventType.INCIDENT_CREATED,
+                metadata: {
+                    status: Status.OPEN,
+                },
+            },
+        });
+
+        return incident;
     });
-
-    return incident;
-
 }
 
 
@@ -168,14 +177,149 @@ export const updateStatus = async (input: UpdateStatusInput) => {
             },
         }),
 
-        prisma.comment.create({
+        prisma.incidentEvent.create({
             data: {
                 incidentId: incident.id,
-                authorId: input.userId,
-                message,
-                type: CommentType.SYSTEM_EVENT,
+                actorId: input.userId,
+                eventType: EventType.STATUS_CHANGED,
+                metadata: {
+                from: currentStatus,
+                to: newStatus,
+                },
+            },
+            })
+    ]);   
+    return updatedIncident;
+}
+
+type ReassignOwnernput = {
+    incidentId: string
+    newOwnerId: string
+    userId: string
+}
+
+export const reassignOwner = async (input: ReassignOwnernput) => {
+    const incident = await prisma.incident.findUnique({
+        where: { id: input.incidentId },
+    });
+
+    if (!incident) {
+        throw new Error(`Incident not found!`);
+    }
+
+    if (incident.status === Status.DISCARDED ) {
+        throw new Error("Cannot reassign a discarded incident");
+    }
+
+    const actingUser = await prisma.user.findUnique({
+        where: { id: input.userId}
+    });
+
+    if (!actingUser) {
+        throw new Error("user not found");
+    }
+
+    if (actingUser.role !== Role.ADMIN && actingUser.id !== incident.ownerId) {
+        throw new Error("Unauthorized: only owner or admin can reassign")
+    }
+
+    if (incident.ownerId === input.newOwnerId) {
+        throw new Error("New owner must be different from current owner")
+    }
+
+    const newOwner = await prisma.user.findUnique({
+        where: { id: input.newOwnerId }
+    });
+
+    if (!newOwner) {
+        throw new Error("New owner not found")
+    }
+
+    const [updatedIncident] = await prisma.$transaction([
+        prisma.incident.update({
+            where: {
+                id: incident.id,
+                version: incident.version
+            },
+            data: {
+                ownerId: input.newOwnerId,
+                version: { increment: 1 },
             },
         }),
-    ]);   
+        prisma.incidentEvent.create({
+            data: {
+                incidentId: incident.id,
+                actorId: input.userId,
+                eventType: EventType.OWNER_CHANGED,
+                metadata: {
+                    from: incident.ownerId,
+                    to: input.newOwnerId,
+                },
+            },
+        }),
+    ]);
+    return updatedIncident;
+}
+
+type changeSeverityInput = {
+    incidentId: string
+    newSeverity: Severity
+    userId: string
+}
+
+export const changeSeverity = async (input: changeSeverityInput) => {
+    // incident must exist
+    const incident = await prisma.incident.findUnique({
+        where: { id: input.incidentId }
+    })
+
+    if (!incident) {
+        throw new Error("Incident not found");
+    }
+
+    // acting user must exist
+    const actingUser = await prisma.user.findUnique({
+        where: { id: input.userId }
+    });
+
+    if (!actingUser) {
+        throw new Error("User not found");
+    }
+
+    if (incident.status === Status.DISCARDED) {
+        throw new Error("Cannot change severity of a discarded incident");
+    }
+
+    if (actingUser.role !== Role.ADMIN && actingUser.id !== incident.ownerId) {
+        throw new Error("Unauthorized: only owner or admin can change severity");
+    }
+
+    if (incident.severity === input.newSeverity) {
+        throw new Error("New severity must differ from current severity");
+    }
+
+    const [updatedIncident] = await prisma.$transaction([
+        prisma.incident.update({
+            where: {
+                id: incident.id,
+                version: incident.version,
+            },
+            data: {
+                severity: input.newSeverity,
+                version: { increment: 1 },
+            },
+        }),
+        prisma.incidentEvent.create({
+            data: {
+                incidentId: incident.id,
+                actorId: input.userId,
+                eventType: EventType.SEVERITY_CHANGED,
+                metadata: {
+                    from: incident.severity,
+                    to: input.newSeverity,
+                },
+            },
+        }),
+    ]);
     return updatedIncident;
 }

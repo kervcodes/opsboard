@@ -28,6 +28,11 @@ export type Comment = $Result.DefaultSelection<Prisma.$CommentPayload>
  * 
  */
 export type Incident = $Result.DefaultSelection<Prisma.$IncidentPayload>
+/**
+ * Model IncidentEvent
+ * 
+ */
+export type IncidentEvent = $Result.DefaultSelection<Prisma.$IncidentEventPayload>
 
 /**
  * Enums
@@ -65,11 +70,21 @@ export type Severity = (typeof Severity)[keyof typeof Severity]
 
 
 export const CommentType: {
-  SYSTEM_EVENT: 'SYSTEM_EVENT',
-  USER_UPDATE: 'USER_UPDATE'
+  USER_UPDATE: 'USER_UPDATE',
+  SYSTEM_EVENT: 'SYSTEM_EVENT'
 };
 
 export type CommentType = (typeof CommentType)[keyof typeof CommentType]
+
+
+export const EventType: {
+  INCIDENT_CREATED: 'INCIDENT_CREATED',
+  STATUS_CHANGED: 'STATUS_CHANGED',
+  SEVERITY_CHANGED: 'SEVERITY_CHANGED',
+  OWNER_CHANGED: 'OWNER_CHANGED'
+};
+
+export type EventType = (typeof EventType)[keyof typeof EventType]
 
 }
 
@@ -88,6 +103,10 @@ export const Severity: typeof $Enums.Severity
 export type CommentType = $Enums.CommentType
 
 export const CommentType: typeof $Enums.CommentType
+
+export type EventType = $Enums.EventType
+
+export const EventType: typeof $Enums.EventType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -235,6 +254,16 @@ export class PrismaClient<
     * ```
     */
   get incident(): Prisma.IncidentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.incidentEvent`: Exposes CRUD operations for the **IncidentEvent** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more IncidentEvents
+    * const incidentEvents = await prisma.incidentEvent.findMany()
+    * ```
+    */
+  get incidentEvent(): Prisma.IncidentEventDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -671,7 +700,8 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     Comment: 'Comment',
-    Incident: 'Incident'
+    Incident: 'Incident',
+    IncidentEvent: 'IncidentEvent'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -687,7 +717,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "comment" | "incident"
+      modelProps: "user" | "comment" | "incident" | "incidentEvent"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -913,6 +943,80 @@ export namespace Prisma {
           }
         }
       }
+      IncidentEvent: {
+        payload: Prisma.$IncidentEventPayload<ExtArgs>
+        fields: Prisma.IncidentEventFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.IncidentEventFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentEventPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.IncidentEventFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentEventPayload>
+          }
+          findFirst: {
+            args: Prisma.IncidentEventFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentEventPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.IncidentEventFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentEventPayload>
+          }
+          findMany: {
+            args: Prisma.IncidentEventFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentEventPayload>[]
+          }
+          create: {
+            args: Prisma.IncidentEventCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentEventPayload>
+          }
+          createMany: {
+            args: Prisma.IncidentEventCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.IncidentEventCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentEventPayload>[]
+          }
+          delete: {
+            args: Prisma.IncidentEventDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentEventPayload>
+          }
+          update: {
+            args: Prisma.IncidentEventUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentEventPayload>
+          }
+          deleteMany: {
+            args: Prisma.IncidentEventDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.IncidentEventUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.IncidentEventUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentEventPayload>[]
+          }
+          upsert: {
+            args: Prisma.IncidentEventUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IncidentEventPayload>
+          }
+          aggregate: {
+            args: Prisma.IncidentEventAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateIncidentEvent>
+          }
+          groupBy: {
+            args: Prisma.IncidentEventGroupByArgs<ExtArgs>
+            result: $Utils.Optional<IncidentEventGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.IncidentEventCountArgs<ExtArgs>
+            result: $Utils.Optional<IncidentEventCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1024,6 +1128,7 @@ export namespace Prisma {
     user?: UserOmit
     comment?: CommentOmit
     incident?: IncidentOmit
+    incidentEvent?: IncidentEventOmit
   }
 
   /* Types for Logging */
@@ -1104,14 +1209,16 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    createdIncidents: number
     ownedIncidents: number
+    createdIncidents: number
+    actedIncidentEvents: number
     comments: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    createdIncidents?: boolean | UserCountOutputTypeCountCreatedIncidentsArgs
     ownedIncidents?: boolean | UserCountOutputTypeCountOwnedIncidentsArgs
+    createdIncidents?: boolean | UserCountOutputTypeCountCreatedIncidentsArgs
+    actedIncidentEvents?: boolean | UserCountOutputTypeCountActedIncidentEventsArgs
     comments?: boolean | UserCountOutputTypeCountCommentsArgs
   }
 
@@ -1129,6 +1236,13 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
+  export type UserCountOutputTypeCountOwnedIncidentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IncidentWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
   export type UserCountOutputTypeCountCreatedIncidentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: IncidentWhereInput
   }
@@ -1136,8 +1250,8 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountOwnedIncidentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: IncidentWhereInput
+  export type UserCountOutputTypeCountActedIncidentEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IncidentEventWhereInput
   }
 
   /**
@@ -1154,10 +1268,12 @@ export namespace Prisma {
 
   export type IncidentCountOutputType = {
     comments: number
+    events: number
   }
 
   export type IncidentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     comments?: boolean | IncidentCountOutputTypeCountCommentsArgs
+    events?: boolean | IncidentCountOutputTypeCountEventsArgs
   }
 
   // Custom InputTypes
@@ -1178,6 +1294,13 @@ export namespace Prisma {
     where?: CommentWhereInput
   }
 
+  /**
+   * IncidentCountOutputType without action
+   */
+  export type IncidentCountOutputTypeCountEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IncidentEventWhereInput
+  }
+
 
   /**
    * Models
@@ -1195,52 +1318,34 @@ export namespace Prisma {
 
   export type UserMinAggregateOutputType = {
     id: string | null
-    name: string | null
-    email: string | null
     role: $Enums.Role | null
-    createdAt: Date | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: string | null
-    name: string | null
-    email: string | null
     role: $Enums.Role | null
-    createdAt: Date | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
-    name: number
-    email: number
     role: number
-    createdAt: number
     _all: number
   }
 
 
   export type UserMinAggregateInputType = {
     id?: true
-    name?: true
-    email?: true
     role?: true
-    createdAt?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
-    name?: true
-    email?: true
     role?: true
-    createdAt?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
-    name?: true
-    email?: true
     role?: true
-    createdAt?: true
     _all?: true
   }
 
@@ -1318,10 +1423,7 @@ export namespace Prisma {
 
   export type UserGroupByOutputType = {
     id: string
-    name: string | null
-    email: string
     role: $Enums.Role
-    createdAt: Date
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -1343,44 +1445,34 @@ export namespace Prisma {
 
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
-    email?: boolean
     role?: boolean
-    createdAt?: boolean
-    createdIncidents?: boolean | User$createdIncidentsArgs<ExtArgs>
     ownedIncidents?: boolean | User$ownedIncidentsArgs<ExtArgs>
+    createdIncidents?: boolean | User$createdIncidentsArgs<ExtArgs>
+    actedIncidentEvents?: boolean | User$actedIncidentEventsArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
-    email?: boolean
     role?: boolean
-    createdAt?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
-    email?: boolean
     role?: boolean
-    createdAt?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
-    name?: boolean
-    email?: boolean
     role?: boolean
-    createdAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "role" | "createdAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "role", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    createdIncidents?: boolean | User$createdIncidentsArgs<ExtArgs>
     ownedIncidents?: boolean | User$ownedIncidentsArgs<ExtArgs>
+    createdIncidents?: boolean | User$createdIncidentsArgs<ExtArgs>
+    actedIncidentEvents?: boolean | User$actedIncidentEventsArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -1390,16 +1482,14 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      createdIncidents: Prisma.$IncidentPayload<ExtArgs>[]
       ownedIncidents: Prisma.$IncidentPayload<ExtArgs>[]
+      createdIncidents: Prisma.$IncidentPayload<ExtArgs>[]
+      actedIncidentEvents: Prisma.$IncidentEventPayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      name: string | null
-      email: string
       role: $Enums.Role
-      createdAt: Date
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -1794,8 +1884,9 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    createdIncidents<T extends User$createdIncidentsArgs<ExtArgs> = {}>(args?: Subset<T, User$createdIncidentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncidentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     ownedIncidents<T extends User$ownedIncidentsArgs<ExtArgs> = {}>(args?: Subset<T, User$ownedIncidentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncidentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    createdIncidents<T extends User$createdIncidentsArgs<ExtArgs> = {}>(args?: Subset<T, User$createdIncidentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncidentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    actedIncidentEvents<T extends User$actedIncidentEventsArgs<ExtArgs> = {}>(args?: Subset<T, User$actedIncidentEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncidentEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends User$commentsArgs<ExtArgs> = {}>(args?: Subset<T, User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1827,10 +1918,7 @@ export namespace Prisma {
    */
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
-    readonly name: FieldRef<"User", 'String'>
-    readonly email: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'Role'>
-    readonly createdAt: FieldRef<"User", 'DateTime'>
   }
     
 
@@ -2049,7 +2137,7 @@ export namespace Prisma {
     /**
      * The data needed to create a User.
      */
-    data: XOR<UserCreateInput, UserUncheckedCreateInput>
+    data?: XOR<UserCreateInput, UserUncheckedCreateInput>
   }
 
   /**
@@ -2219,6 +2307,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.ownedIncidents
+   */
+  export type User$ownedIncidentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Incident
+     */
+    select?: IncidentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Incident
+     */
+    omit?: IncidentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentInclude<ExtArgs> | null
+    where?: IncidentWhereInput
+    orderBy?: IncidentOrderByWithRelationInput | IncidentOrderByWithRelationInput[]
+    cursor?: IncidentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: IncidentScalarFieldEnum | IncidentScalarFieldEnum[]
+  }
+
+  /**
    * User.createdIncidents
    */
   export type User$createdIncidentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2243,27 +2355,27 @@ export namespace Prisma {
   }
 
   /**
-   * User.ownedIncidents
+   * User.actedIncidentEvents
    */
-  export type User$ownedIncidentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$actedIncidentEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Incident
+     * Select specific fields to fetch from the IncidentEvent
      */
-    select?: IncidentSelect<ExtArgs> | null
+    select?: IncidentEventSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Incident
+     * Omit specific fields from the IncidentEvent
      */
-    omit?: IncidentOmit<ExtArgs> | null
+    omit?: IncidentEventOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: IncidentInclude<ExtArgs> | null
-    where?: IncidentWhereInput
-    orderBy?: IncidentOrderByWithRelationInput | IncidentOrderByWithRelationInput[]
-    cursor?: IncidentWhereUniqueInput
+    include?: IncidentEventInclude<ExtArgs> | null
+    where?: IncidentEventWhereInput
+    orderBy?: IncidentEventOrderByWithRelationInput | IncidentEventOrderByWithRelationInput[]
+    cursor?: IncidentEventWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: IncidentScalarFieldEnum | IncidentScalarFieldEnum[]
+    distinct?: IncidentEventScalarFieldEnum | IncidentEventScalarFieldEnum[]
   }
 
   /**
@@ -2324,10 +2436,7 @@ export namespace Prisma {
     incidentId: string | null
     authorId: string | null
     message: string | null
-    type: $Enums.CommentType | null
     createdAt: Date | null
-    editedAt: Date | null
-    isEdited: boolean | null
   }
 
   export type CommentMaxAggregateOutputType = {
@@ -2335,10 +2444,7 @@ export namespace Prisma {
     incidentId: string | null
     authorId: string | null
     message: string | null
-    type: $Enums.CommentType | null
     createdAt: Date | null
-    editedAt: Date | null
-    isEdited: boolean | null
   }
 
   export type CommentCountAggregateOutputType = {
@@ -2346,10 +2452,7 @@ export namespace Prisma {
     incidentId: number
     authorId: number
     message: number
-    type: number
     createdAt: number
-    editedAt: number
-    isEdited: number
     _all: number
   }
 
@@ -2359,10 +2462,7 @@ export namespace Prisma {
     incidentId?: true
     authorId?: true
     message?: true
-    type?: true
     createdAt?: true
-    editedAt?: true
-    isEdited?: true
   }
 
   export type CommentMaxAggregateInputType = {
@@ -2370,10 +2470,7 @@ export namespace Prisma {
     incidentId?: true
     authorId?: true
     message?: true
-    type?: true
     createdAt?: true
-    editedAt?: true
-    isEdited?: true
   }
 
   export type CommentCountAggregateInputType = {
@@ -2381,10 +2478,7 @@ export namespace Prisma {
     incidentId?: true
     authorId?: true
     message?: true
-    type?: true
     createdAt?: true
-    editedAt?: true
-    isEdited?: true
     _all?: true
   }
 
@@ -2465,10 +2559,7 @@ export namespace Prisma {
     incidentId: string
     authorId: string
     message: string
-    type: $Enums.CommentType
     createdAt: Date
-    editedAt: Date | null
-    isEdited: boolean
     _count: CommentCountAggregateOutputType | null
     _min: CommentMinAggregateOutputType | null
     _max: CommentMaxAggregateOutputType | null
@@ -2493,10 +2584,7 @@ export namespace Prisma {
     incidentId?: boolean
     authorId?: boolean
     message?: boolean
-    type?: boolean
     createdAt?: boolean
-    editedAt?: boolean
-    isEdited?: boolean
     incident?: boolean | IncidentDefaultArgs<ExtArgs>
     author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comment"]>
@@ -2506,10 +2594,7 @@ export namespace Prisma {
     incidentId?: boolean
     authorId?: boolean
     message?: boolean
-    type?: boolean
     createdAt?: boolean
-    editedAt?: boolean
-    isEdited?: boolean
     incident?: boolean | IncidentDefaultArgs<ExtArgs>
     author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comment"]>
@@ -2519,10 +2604,7 @@ export namespace Prisma {
     incidentId?: boolean
     authorId?: boolean
     message?: boolean
-    type?: boolean
     createdAt?: boolean
-    editedAt?: boolean
-    isEdited?: boolean
     incident?: boolean | IncidentDefaultArgs<ExtArgs>
     author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comment"]>
@@ -2532,13 +2614,10 @@ export namespace Prisma {
     incidentId?: boolean
     authorId?: boolean
     message?: boolean
-    type?: boolean
     createdAt?: boolean
-    editedAt?: boolean
-    isEdited?: boolean
   }
 
-  export type CommentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "incidentId" | "authorId" | "message" | "type" | "createdAt" | "editedAt" | "isEdited", ExtArgs["result"]["comment"]>
+  export type CommentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "incidentId" | "authorId" | "message" | "createdAt", ExtArgs["result"]["comment"]>
   export type CommentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     incident?: boolean | IncidentDefaultArgs<ExtArgs>
     author?: boolean | UserDefaultArgs<ExtArgs>
@@ -2563,10 +2642,7 @@ export namespace Prisma {
       incidentId: string
       authorId: string
       message: string
-      type: $Enums.CommentType
       createdAt: Date
-      editedAt: Date | null
-      isEdited: boolean
     }, ExtArgs["result"]["comment"]>
     composites: {}
   }
@@ -2996,10 +3072,7 @@ export namespace Prisma {
     readonly incidentId: FieldRef<"Comment", 'String'>
     readonly authorId: FieldRef<"Comment", 'String'>
     readonly message: FieldRef<"Comment", 'String'>
-    readonly type: FieldRef<"Comment", 'CommentType'>
     readonly createdAt: FieldRef<"Comment", 'DateTime'>
-    readonly editedAt: FieldRef<"Comment", 'DateTime'>
-    readonly isEdited: FieldRef<"Comment", 'Boolean'>
   }
     
 
@@ -3442,13 +3515,13 @@ export namespace Prisma {
     description: string | null
     severity: $Enums.Severity | null
     status: $Enums.Status | null
-    slaTargetMinutes: number | null
-    currentSlaStartAt: Date | null
-    ownerId: string | null
-    createdById: string | null
     acknowledgedAt: Date | null
     resolvedAt: Date | null
     closedAt: Date | null
+    currentSlaStartAt: Date | null
+    slaTargetMinutes: number | null
+    ownerId: string | null
+    createdById: string | null
     version: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -3460,13 +3533,13 @@ export namespace Prisma {
     description: string | null
     severity: $Enums.Severity | null
     status: $Enums.Status | null
-    slaTargetMinutes: number | null
-    currentSlaStartAt: Date | null
-    ownerId: string | null
-    createdById: string | null
     acknowledgedAt: Date | null
     resolvedAt: Date | null
     closedAt: Date | null
+    currentSlaStartAt: Date | null
+    slaTargetMinutes: number | null
+    ownerId: string | null
+    createdById: string | null
     version: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -3478,13 +3551,13 @@ export namespace Prisma {
     description: number
     severity: number
     status: number
-    slaTargetMinutes: number
-    currentSlaStartAt: number
-    ownerId: number
-    createdById: number
     acknowledgedAt: number
     resolvedAt: number
     closedAt: number
+    currentSlaStartAt: number
+    slaTargetMinutes: number
+    ownerId: number
+    createdById: number
     version: number
     createdAt: number
     updatedAt: number
@@ -3508,13 +3581,13 @@ export namespace Prisma {
     description?: true
     severity?: true
     status?: true
-    slaTargetMinutes?: true
-    currentSlaStartAt?: true
-    ownerId?: true
-    createdById?: true
     acknowledgedAt?: true
     resolvedAt?: true
     closedAt?: true
+    currentSlaStartAt?: true
+    slaTargetMinutes?: true
+    ownerId?: true
+    createdById?: true
     version?: true
     createdAt?: true
     updatedAt?: true
@@ -3526,13 +3599,13 @@ export namespace Prisma {
     description?: true
     severity?: true
     status?: true
-    slaTargetMinutes?: true
-    currentSlaStartAt?: true
-    ownerId?: true
-    createdById?: true
     acknowledgedAt?: true
     resolvedAt?: true
     closedAt?: true
+    currentSlaStartAt?: true
+    slaTargetMinutes?: true
+    ownerId?: true
+    createdById?: true
     version?: true
     createdAt?: true
     updatedAt?: true
@@ -3544,13 +3617,13 @@ export namespace Prisma {
     description?: true
     severity?: true
     status?: true
-    slaTargetMinutes?: true
-    currentSlaStartAt?: true
-    ownerId?: true
-    createdById?: true
     acknowledgedAt?: true
     resolvedAt?: true
     closedAt?: true
+    currentSlaStartAt?: true
+    slaTargetMinutes?: true
+    ownerId?: true
+    createdById?: true
     version?: true
     createdAt?: true
     updatedAt?: true
@@ -3647,15 +3720,15 @@ export namespace Prisma {
     id: string
     title: string
     description: string
-    severity: $Enums.Severity
+    severity: $Enums.Severity | null
     status: $Enums.Status
-    slaTargetMinutes: number | null
-    currentSlaStartAt: Date
-    ownerId: string
-    createdById: string
     acknowledgedAt: Date | null
     resolvedAt: Date | null
     closedAt: Date | null
+    currentSlaStartAt: Date
+    slaTargetMinutes: number | null
+    ownerId: string
+    createdById: string
     version: number
     createdAt: Date
     updatedAt: Date
@@ -3686,19 +3759,20 @@ export namespace Prisma {
     description?: boolean
     severity?: boolean
     status?: boolean
-    slaTargetMinutes?: boolean
-    currentSlaStartAt?: boolean
-    ownerId?: boolean
-    createdById?: boolean
     acknowledgedAt?: boolean
     resolvedAt?: boolean
     closedAt?: boolean
+    currentSlaStartAt?: boolean
+    slaTargetMinutes?: boolean
+    ownerId?: boolean
+    createdById?: boolean
     version?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     comments?: boolean | Incident$commentsArgs<ExtArgs>
+    events?: boolean | Incident$eventsArgs<ExtArgs>
     _count?: boolean | IncidentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["incident"]>
 
@@ -3708,13 +3782,13 @@ export namespace Prisma {
     description?: boolean
     severity?: boolean
     status?: boolean
-    slaTargetMinutes?: boolean
-    currentSlaStartAt?: boolean
-    ownerId?: boolean
-    createdById?: boolean
     acknowledgedAt?: boolean
     resolvedAt?: boolean
     closedAt?: boolean
+    currentSlaStartAt?: boolean
+    slaTargetMinutes?: boolean
+    ownerId?: boolean
+    createdById?: boolean
     version?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -3728,13 +3802,13 @@ export namespace Prisma {
     description?: boolean
     severity?: boolean
     status?: boolean
-    slaTargetMinutes?: boolean
-    currentSlaStartAt?: boolean
-    ownerId?: boolean
-    createdById?: boolean
     acknowledgedAt?: boolean
     resolvedAt?: boolean
     closedAt?: boolean
+    currentSlaStartAt?: boolean
+    slaTargetMinutes?: boolean
+    ownerId?: boolean
+    createdById?: boolean
     version?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -3748,23 +3822,24 @@ export namespace Prisma {
     description?: boolean
     severity?: boolean
     status?: boolean
-    slaTargetMinutes?: boolean
-    currentSlaStartAt?: boolean
-    ownerId?: boolean
-    createdById?: boolean
     acknowledgedAt?: boolean
     resolvedAt?: boolean
     closedAt?: boolean
+    currentSlaStartAt?: boolean
+    slaTargetMinutes?: boolean
+    ownerId?: boolean
+    createdById?: boolean
     version?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type IncidentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "severity" | "status" | "slaTargetMinutes" | "currentSlaStartAt" | "ownerId" | "createdById" | "acknowledgedAt" | "resolvedAt" | "closedAt" | "version" | "createdAt" | "updatedAt", ExtArgs["result"]["incident"]>
+  export type IncidentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "severity" | "status" | "acknowledgedAt" | "resolvedAt" | "closedAt" | "currentSlaStartAt" | "slaTargetMinutes" | "ownerId" | "createdById" | "version" | "createdAt" | "updatedAt", ExtArgs["result"]["incident"]>
   export type IncidentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     owner?: boolean | UserDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     comments?: boolean | Incident$commentsArgs<ExtArgs>
+    events?: boolean | Incident$eventsArgs<ExtArgs>
     _count?: boolean | IncidentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type IncidentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3782,20 +3857,21 @@ export namespace Prisma {
       owner: Prisma.$UserPayload<ExtArgs>
       createdBy: Prisma.$UserPayload<ExtArgs>
       comments: Prisma.$CommentPayload<ExtArgs>[]
+      events: Prisma.$IncidentEventPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       title: string
       description: string
-      severity: $Enums.Severity
+      severity: $Enums.Severity | null
       status: $Enums.Status
-      slaTargetMinutes: number | null
-      currentSlaStartAt: Date
-      ownerId: string
-      createdById: string
       acknowledgedAt: Date | null
       resolvedAt: Date | null
       closedAt: Date | null
+      currentSlaStartAt: Date
+      slaTargetMinutes: number | null
+      ownerId: string
+      createdById: string
       version: number
       createdAt: Date
       updatedAt: Date
@@ -4196,6 +4272,7 @@ export namespace Prisma {
     owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     comments<T extends Incident$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Incident$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    events<T extends Incident$eventsArgs<ExtArgs> = {}>(args?: Subset<T, Incident$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncidentEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4230,13 +4307,13 @@ export namespace Prisma {
     readonly description: FieldRef<"Incident", 'String'>
     readonly severity: FieldRef<"Incident", 'Severity'>
     readonly status: FieldRef<"Incident", 'Status'>
-    readonly slaTargetMinutes: FieldRef<"Incident", 'Int'>
-    readonly currentSlaStartAt: FieldRef<"Incident", 'DateTime'>
-    readonly ownerId: FieldRef<"Incident", 'String'>
-    readonly createdById: FieldRef<"Incident", 'String'>
     readonly acknowledgedAt: FieldRef<"Incident", 'DateTime'>
     readonly resolvedAt: FieldRef<"Incident", 'DateTime'>
     readonly closedAt: FieldRef<"Incident", 'DateTime'>
+    readonly currentSlaStartAt: FieldRef<"Incident", 'DateTime'>
+    readonly slaTargetMinutes: FieldRef<"Incident", 'Int'>
+    readonly ownerId: FieldRef<"Incident", 'String'>
+    readonly createdById: FieldRef<"Incident", 'String'>
     readonly version: FieldRef<"Incident", 'Int'>
     readonly createdAt: FieldRef<"Incident", 'DateTime'>
     readonly updatedAt: FieldRef<"Incident", 'DateTime'>
@@ -4660,6 +4737,30 @@ export namespace Prisma {
   }
 
   /**
+   * Incident.events
+   */
+  export type Incident$eventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentEvent
+     */
+    select?: IncidentEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentEvent
+     */
+    omit?: IncidentEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentEventInclude<ExtArgs> | null
+    where?: IncidentEventWhereInput
+    orderBy?: IncidentEventOrderByWithRelationInput | IncidentEventOrderByWithRelationInput[]
+    cursor?: IncidentEventWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: IncidentEventScalarFieldEnum | IncidentEventScalarFieldEnum[]
+  }
+
+  /**
    * Incident without action
    */
   export type IncidentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4679,6 +4780,1100 @@ export namespace Prisma {
 
 
   /**
+   * Model IncidentEvent
+   */
+
+  export type AggregateIncidentEvent = {
+    _count: IncidentEventCountAggregateOutputType | null
+    _min: IncidentEventMinAggregateOutputType | null
+    _max: IncidentEventMaxAggregateOutputType | null
+  }
+
+  export type IncidentEventMinAggregateOutputType = {
+    id: string | null
+    incidentId: string | null
+    actorId: string | null
+    eventType: $Enums.EventType | null
+    createdAt: Date | null
+  }
+
+  export type IncidentEventMaxAggregateOutputType = {
+    id: string | null
+    incidentId: string | null
+    actorId: string | null
+    eventType: $Enums.EventType | null
+    createdAt: Date | null
+  }
+
+  export type IncidentEventCountAggregateOutputType = {
+    id: number
+    incidentId: number
+    actorId: number
+    eventType: number
+    metadata: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type IncidentEventMinAggregateInputType = {
+    id?: true
+    incidentId?: true
+    actorId?: true
+    eventType?: true
+    createdAt?: true
+  }
+
+  export type IncidentEventMaxAggregateInputType = {
+    id?: true
+    incidentId?: true
+    actorId?: true
+    eventType?: true
+    createdAt?: true
+  }
+
+  export type IncidentEventCountAggregateInputType = {
+    id?: true
+    incidentId?: true
+    actorId?: true
+    eventType?: true
+    metadata?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type IncidentEventAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IncidentEvent to aggregate.
+     */
+    where?: IncidentEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IncidentEvents to fetch.
+     */
+    orderBy?: IncidentEventOrderByWithRelationInput | IncidentEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: IncidentEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IncidentEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IncidentEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned IncidentEvents
+    **/
+    _count?: true | IncidentEventCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: IncidentEventMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: IncidentEventMaxAggregateInputType
+  }
+
+  export type GetIncidentEventAggregateType<T extends IncidentEventAggregateArgs> = {
+        [P in keyof T & keyof AggregateIncidentEvent]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateIncidentEvent[P]>
+      : GetScalarType<T[P], AggregateIncidentEvent[P]>
+  }
+
+
+
+
+  export type IncidentEventGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IncidentEventWhereInput
+    orderBy?: IncidentEventOrderByWithAggregationInput | IncidentEventOrderByWithAggregationInput[]
+    by: IncidentEventScalarFieldEnum[] | IncidentEventScalarFieldEnum
+    having?: IncidentEventScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: IncidentEventCountAggregateInputType | true
+    _min?: IncidentEventMinAggregateInputType
+    _max?: IncidentEventMaxAggregateInputType
+  }
+
+  export type IncidentEventGroupByOutputType = {
+    id: string
+    incidentId: string
+    actorId: string | null
+    eventType: $Enums.EventType
+    metadata: JsonValue
+    createdAt: Date
+    _count: IncidentEventCountAggregateOutputType | null
+    _min: IncidentEventMinAggregateOutputType | null
+    _max: IncidentEventMaxAggregateOutputType | null
+  }
+
+  type GetIncidentEventGroupByPayload<T extends IncidentEventGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<IncidentEventGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof IncidentEventGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], IncidentEventGroupByOutputType[P]>
+            : GetScalarType<T[P], IncidentEventGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type IncidentEventSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    incidentId?: boolean
+    actorId?: boolean
+    eventType?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    incident?: boolean | IncidentDefaultArgs<ExtArgs>
+    actor?: boolean | IncidentEvent$actorArgs<ExtArgs>
+  }, ExtArgs["result"]["incidentEvent"]>
+
+  export type IncidentEventSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    incidentId?: boolean
+    actorId?: boolean
+    eventType?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    incident?: boolean | IncidentDefaultArgs<ExtArgs>
+    actor?: boolean | IncidentEvent$actorArgs<ExtArgs>
+  }, ExtArgs["result"]["incidentEvent"]>
+
+  export type IncidentEventSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    incidentId?: boolean
+    actorId?: boolean
+    eventType?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    incident?: boolean | IncidentDefaultArgs<ExtArgs>
+    actor?: boolean | IncidentEvent$actorArgs<ExtArgs>
+  }, ExtArgs["result"]["incidentEvent"]>
+
+  export type IncidentEventSelectScalar = {
+    id?: boolean
+    incidentId?: boolean
+    actorId?: boolean
+    eventType?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+  }
+
+  export type IncidentEventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "incidentId" | "actorId" | "eventType" | "metadata" | "createdAt", ExtArgs["result"]["incidentEvent"]>
+  export type IncidentEventInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    incident?: boolean | IncidentDefaultArgs<ExtArgs>
+    actor?: boolean | IncidentEvent$actorArgs<ExtArgs>
+  }
+  export type IncidentEventIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    incident?: boolean | IncidentDefaultArgs<ExtArgs>
+    actor?: boolean | IncidentEvent$actorArgs<ExtArgs>
+  }
+  export type IncidentEventIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    incident?: boolean | IncidentDefaultArgs<ExtArgs>
+    actor?: boolean | IncidentEvent$actorArgs<ExtArgs>
+  }
+
+  export type $IncidentEventPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "IncidentEvent"
+    objects: {
+      incident: Prisma.$IncidentPayload<ExtArgs>
+      actor: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      incidentId: string
+      actorId: string | null
+      eventType: $Enums.EventType
+      metadata: Prisma.JsonValue
+      createdAt: Date
+    }, ExtArgs["result"]["incidentEvent"]>
+    composites: {}
+  }
+
+  type IncidentEventGetPayload<S extends boolean | null | undefined | IncidentEventDefaultArgs> = $Result.GetResult<Prisma.$IncidentEventPayload, S>
+
+  type IncidentEventCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<IncidentEventFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: IncidentEventCountAggregateInputType | true
+    }
+
+  export interface IncidentEventDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['IncidentEvent'], meta: { name: 'IncidentEvent' } }
+    /**
+     * Find zero or one IncidentEvent that matches the filter.
+     * @param {IncidentEventFindUniqueArgs} args - Arguments to find a IncidentEvent
+     * @example
+     * // Get one IncidentEvent
+     * const incidentEvent = await prisma.incidentEvent.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends IncidentEventFindUniqueArgs>(args: SelectSubset<T, IncidentEventFindUniqueArgs<ExtArgs>>): Prisma__IncidentEventClient<$Result.GetResult<Prisma.$IncidentEventPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one IncidentEvent that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {IncidentEventFindUniqueOrThrowArgs} args - Arguments to find a IncidentEvent
+     * @example
+     * // Get one IncidentEvent
+     * const incidentEvent = await prisma.incidentEvent.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends IncidentEventFindUniqueOrThrowArgs>(args: SelectSubset<T, IncidentEventFindUniqueOrThrowArgs<ExtArgs>>): Prisma__IncidentEventClient<$Result.GetResult<Prisma.$IncidentEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IncidentEvent that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentEventFindFirstArgs} args - Arguments to find a IncidentEvent
+     * @example
+     * // Get one IncidentEvent
+     * const incidentEvent = await prisma.incidentEvent.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends IncidentEventFindFirstArgs>(args?: SelectSubset<T, IncidentEventFindFirstArgs<ExtArgs>>): Prisma__IncidentEventClient<$Result.GetResult<Prisma.$IncidentEventPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IncidentEvent that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentEventFindFirstOrThrowArgs} args - Arguments to find a IncidentEvent
+     * @example
+     * // Get one IncidentEvent
+     * const incidentEvent = await prisma.incidentEvent.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends IncidentEventFindFirstOrThrowArgs>(args?: SelectSubset<T, IncidentEventFindFirstOrThrowArgs<ExtArgs>>): Prisma__IncidentEventClient<$Result.GetResult<Prisma.$IncidentEventPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more IncidentEvents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentEventFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all IncidentEvents
+     * const incidentEvents = await prisma.incidentEvent.findMany()
+     * 
+     * // Get first 10 IncidentEvents
+     * const incidentEvents = await prisma.incidentEvent.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const incidentEventWithIdOnly = await prisma.incidentEvent.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends IncidentEventFindManyArgs>(args?: SelectSubset<T, IncidentEventFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncidentEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a IncidentEvent.
+     * @param {IncidentEventCreateArgs} args - Arguments to create a IncidentEvent.
+     * @example
+     * // Create one IncidentEvent
+     * const IncidentEvent = await prisma.incidentEvent.create({
+     *   data: {
+     *     // ... data to create a IncidentEvent
+     *   }
+     * })
+     * 
+     */
+    create<T extends IncidentEventCreateArgs>(args: SelectSubset<T, IncidentEventCreateArgs<ExtArgs>>): Prisma__IncidentEventClient<$Result.GetResult<Prisma.$IncidentEventPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many IncidentEvents.
+     * @param {IncidentEventCreateManyArgs} args - Arguments to create many IncidentEvents.
+     * @example
+     * // Create many IncidentEvents
+     * const incidentEvent = await prisma.incidentEvent.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends IncidentEventCreateManyArgs>(args?: SelectSubset<T, IncidentEventCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many IncidentEvents and returns the data saved in the database.
+     * @param {IncidentEventCreateManyAndReturnArgs} args - Arguments to create many IncidentEvents.
+     * @example
+     * // Create many IncidentEvents
+     * const incidentEvent = await prisma.incidentEvent.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many IncidentEvents and only return the `id`
+     * const incidentEventWithIdOnly = await prisma.incidentEvent.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends IncidentEventCreateManyAndReturnArgs>(args?: SelectSubset<T, IncidentEventCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncidentEventPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a IncidentEvent.
+     * @param {IncidentEventDeleteArgs} args - Arguments to delete one IncidentEvent.
+     * @example
+     * // Delete one IncidentEvent
+     * const IncidentEvent = await prisma.incidentEvent.delete({
+     *   where: {
+     *     // ... filter to delete one IncidentEvent
+     *   }
+     * })
+     * 
+     */
+    delete<T extends IncidentEventDeleteArgs>(args: SelectSubset<T, IncidentEventDeleteArgs<ExtArgs>>): Prisma__IncidentEventClient<$Result.GetResult<Prisma.$IncidentEventPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one IncidentEvent.
+     * @param {IncidentEventUpdateArgs} args - Arguments to update one IncidentEvent.
+     * @example
+     * // Update one IncidentEvent
+     * const incidentEvent = await prisma.incidentEvent.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends IncidentEventUpdateArgs>(args: SelectSubset<T, IncidentEventUpdateArgs<ExtArgs>>): Prisma__IncidentEventClient<$Result.GetResult<Prisma.$IncidentEventPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more IncidentEvents.
+     * @param {IncidentEventDeleteManyArgs} args - Arguments to filter IncidentEvents to delete.
+     * @example
+     * // Delete a few IncidentEvents
+     * const { count } = await prisma.incidentEvent.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends IncidentEventDeleteManyArgs>(args?: SelectSubset<T, IncidentEventDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IncidentEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentEventUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many IncidentEvents
+     * const incidentEvent = await prisma.incidentEvent.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends IncidentEventUpdateManyArgs>(args: SelectSubset<T, IncidentEventUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IncidentEvents and returns the data updated in the database.
+     * @param {IncidentEventUpdateManyAndReturnArgs} args - Arguments to update many IncidentEvents.
+     * @example
+     * // Update many IncidentEvents
+     * const incidentEvent = await prisma.incidentEvent.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more IncidentEvents and only return the `id`
+     * const incidentEventWithIdOnly = await prisma.incidentEvent.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends IncidentEventUpdateManyAndReturnArgs>(args: SelectSubset<T, IncidentEventUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IncidentEventPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one IncidentEvent.
+     * @param {IncidentEventUpsertArgs} args - Arguments to update or create a IncidentEvent.
+     * @example
+     * // Update or create a IncidentEvent
+     * const incidentEvent = await prisma.incidentEvent.upsert({
+     *   create: {
+     *     // ... data to create a IncidentEvent
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the IncidentEvent we want to update
+     *   }
+     * })
+     */
+    upsert<T extends IncidentEventUpsertArgs>(args: SelectSubset<T, IncidentEventUpsertArgs<ExtArgs>>): Prisma__IncidentEventClient<$Result.GetResult<Prisma.$IncidentEventPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of IncidentEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentEventCountArgs} args - Arguments to filter IncidentEvents to count.
+     * @example
+     * // Count the number of IncidentEvents
+     * const count = await prisma.incidentEvent.count({
+     *   where: {
+     *     // ... the filter for the IncidentEvents we want to count
+     *   }
+     * })
+    **/
+    count<T extends IncidentEventCountArgs>(
+      args?: Subset<T, IncidentEventCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], IncidentEventCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a IncidentEvent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentEventAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends IncidentEventAggregateArgs>(args: Subset<T, IncidentEventAggregateArgs>): Prisma.PrismaPromise<GetIncidentEventAggregateType<T>>
+
+    /**
+     * Group by IncidentEvent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IncidentEventGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends IncidentEventGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: IncidentEventGroupByArgs['orderBy'] }
+        : { orderBy?: IncidentEventGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, IncidentEventGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetIncidentEventGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the IncidentEvent model
+   */
+  readonly fields: IncidentEventFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for IncidentEvent.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__IncidentEventClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    incident<T extends IncidentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, IncidentDefaultArgs<ExtArgs>>): Prisma__IncidentClient<$Result.GetResult<Prisma.$IncidentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    actor<T extends IncidentEvent$actorArgs<ExtArgs> = {}>(args?: Subset<T, IncidentEvent$actorArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the IncidentEvent model
+   */
+  interface IncidentEventFieldRefs {
+    readonly id: FieldRef<"IncidentEvent", 'String'>
+    readonly incidentId: FieldRef<"IncidentEvent", 'String'>
+    readonly actorId: FieldRef<"IncidentEvent", 'String'>
+    readonly eventType: FieldRef<"IncidentEvent", 'EventType'>
+    readonly metadata: FieldRef<"IncidentEvent", 'Json'>
+    readonly createdAt: FieldRef<"IncidentEvent", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * IncidentEvent findUnique
+   */
+  export type IncidentEventFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentEvent
+     */
+    select?: IncidentEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentEvent
+     */
+    omit?: IncidentEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentEventInclude<ExtArgs> | null
+    /**
+     * Filter, which IncidentEvent to fetch.
+     */
+    where: IncidentEventWhereUniqueInput
+  }
+
+  /**
+   * IncidentEvent findUniqueOrThrow
+   */
+  export type IncidentEventFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentEvent
+     */
+    select?: IncidentEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentEvent
+     */
+    omit?: IncidentEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentEventInclude<ExtArgs> | null
+    /**
+     * Filter, which IncidentEvent to fetch.
+     */
+    where: IncidentEventWhereUniqueInput
+  }
+
+  /**
+   * IncidentEvent findFirst
+   */
+  export type IncidentEventFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentEvent
+     */
+    select?: IncidentEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentEvent
+     */
+    omit?: IncidentEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentEventInclude<ExtArgs> | null
+    /**
+     * Filter, which IncidentEvent to fetch.
+     */
+    where?: IncidentEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IncidentEvents to fetch.
+     */
+    orderBy?: IncidentEventOrderByWithRelationInput | IncidentEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IncidentEvents.
+     */
+    cursor?: IncidentEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IncidentEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IncidentEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IncidentEvents.
+     */
+    distinct?: IncidentEventScalarFieldEnum | IncidentEventScalarFieldEnum[]
+  }
+
+  /**
+   * IncidentEvent findFirstOrThrow
+   */
+  export type IncidentEventFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentEvent
+     */
+    select?: IncidentEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentEvent
+     */
+    omit?: IncidentEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentEventInclude<ExtArgs> | null
+    /**
+     * Filter, which IncidentEvent to fetch.
+     */
+    where?: IncidentEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IncidentEvents to fetch.
+     */
+    orderBy?: IncidentEventOrderByWithRelationInput | IncidentEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IncidentEvents.
+     */
+    cursor?: IncidentEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IncidentEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IncidentEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IncidentEvents.
+     */
+    distinct?: IncidentEventScalarFieldEnum | IncidentEventScalarFieldEnum[]
+  }
+
+  /**
+   * IncidentEvent findMany
+   */
+  export type IncidentEventFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentEvent
+     */
+    select?: IncidentEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentEvent
+     */
+    omit?: IncidentEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentEventInclude<ExtArgs> | null
+    /**
+     * Filter, which IncidentEvents to fetch.
+     */
+    where?: IncidentEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IncidentEvents to fetch.
+     */
+    orderBy?: IncidentEventOrderByWithRelationInput | IncidentEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing IncidentEvents.
+     */
+    cursor?: IncidentEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IncidentEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IncidentEvents.
+     */
+    skip?: number
+    distinct?: IncidentEventScalarFieldEnum | IncidentEventScalarFieldEnum[]
+  }
+
+  /**
+   * IncidentEvent create
+   */
+  export type IncidentEventCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentEvent
+     */
+    select?: IncidentEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentEvent
+     */
+    omit?: IncidentEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentEventInclude<ExtArgs> | null
+    /**
+     * The data needed to create a IncidentEvent.
+     */
+    data: XOR<IncidentEventCreateInput, IncidentEventUncheckedCreateInput>
+  }
+
+  /**
+   * IncidentEvent createMany
+   */
+  export type IncidentEventCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many IncidentEvents.
+     */
+    data: IncidentEventCreateManyInput | IncidentEventCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * IncidentEvent createManyAndReturn
+   */
+  export type IncidentEventCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentEvent
+     */
+    select?: IncidentEventSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentEvent
+     */
+    omit?: IncidentEventOmit<ExtArgs> | null
+    /**
+     * The data used to create many IncidentEvents.
+     */
+    data: IncidentEventCreateManyInput | IncidentEventCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentEventIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IncidentEvent update
+   */
+  export type IncidentEventUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentEvent
+     */
+    select?: IncidentEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentEvent
+     */
+    omit?: IncidentEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentEventInclude<ExtArgs> | null
+    /**
+     * The data needed to update a IncidentEvent.
+     */
+    data: XOR<IncidentEventUpdateInput, IncidentEventUncheckedUpdateInput>
+    /**
+     * Choose, which IncidentEvent to update.
+     */
+    where: IncidentEventWhereUniqueInput
+  }
+
+  /**
+   * IncidentEvent updateMany
+   */
+  export type IncidentEventUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update IncidentEvents.
+     */
+    data: XOR<IncidentEventUpdateManyMutationInput, IncidentEventUncheckedUpdateManyInput>
+    /**
+     * Filter which IncidentEvents to update
+     */
+    where?: IncidentEventWhereInput
+    /**
+     * Limit how many IncidentEvents to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * IncidentEvent updateManyAndReturn
+   */
+  export type IncidentEventUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentEvent
+     */
+    select?: IncidentEventSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentEvent
+     */
+    omit?: IncidentEventOmit<ExtArgs> | null
+    /**
+     * The data used to update IncidentEvents.
+     */
+    data: XOR<IncidentEventUpdateManyMutationInput, IncidentEventUncheckedUpdateManyInput>
+    /**
+     * Filter which IncidentEvents to update
+     */
+    where?: IncidentEventWhereInput
+    /**
+     * Limit how many IncidentEvents to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentEventIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IncidentEvent upsert
+   */
+  export type IncidentEventUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentEvent
+     */
+    select?: IncidentEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentEvent
+     */
+    omit?: IncidentEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentEventInclude<ExtArgs> | null
+    /**
+     * The filter to search for the IncidentEvent to update in case it exists.
+     */
+    where: IncidentEventWhereUniqueInput
+    /**
+     * In case the IncidentEvent found by the `where` argument doesn't exist, create a new IncidentEvent with this data.
+     */
+    create: XOR<IncidentEventCreateInput, IncidentEventUncheckedCreateInput>
+    /**
+     * In case the IncidentEvent was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<IncidentEventUpdateInput, IncidentEventUncheckedUpdateInput>
+  }
+
+  /**
+   * IncidentEvent delete
+   */
+  export type IncidentEventDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentEvent
+     */
+    select?: IncidentEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentEvent
+     */
+    omit?: IncidentEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentEventInclude<ExtArgs> | null
+    /**
+     * Filter which IncidentEvent to delete.
+     */
+    where: IncidentEventWhereUniqueInput
+  }
+
+  /**
+   * IncidentEvent deleteMany
+   */
+  export type IncidentEventDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IncidentEvents to delete
+     */
+    where?: IncidentEventWhereInput
+    /**
+     * Limit how many IncidentEvents to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * IncidentEvent.actor
+   */
+  export type IncidentEvent$actorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * IncidentEvent without action
+   */
+  export type IncidentEventDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IncidentEvent
+     */
+    select?: IncidentEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IncidentEvent
+     */
+    omit?: IncidentEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IncidentEventInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -4694,10 +5889,7 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
-    name: 'name',
-    email: 'email',
-    role: 'role',
-    createdAt: 'createdAt'
+    role: 'role'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -4708,10 +5900,7 @@ export namespace Prisma {
     incidentId: 'incidentId',
     authorId: 'authorId',
     message: 'message',
-    type: 'type',
-    createdAt: 'createdAt',
-    editedAt: 'editedAt',
-    isEdited: 'isEdited'
+    createdAt: 'createdAt'
   };
 
   export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
@@ -4723,13 +5912,13 @@ export namespace Prisma {
     description: 'description',
     severity: 'severity',
     status: 'status',
-    slaTargetMinutes: 'slaTargetMinutes',
-    currentSlaStartAt: 'currentSlaStartAt',
-    ownerId: 'ownerId',
-    createdById: 'createdById',
     acknowledgedAt: 'acknowledgedAt',
     resolvedAt: 'resolvedAt',
     closedAt: 'closedAt',
+    currentSlaStartAt: 'currentSlaStartAt',
+    slaTargetMinutes: 'slaTargetMinutes',
+    ownerId: 'ownerId',
+    createdById: 'createdById',
     version: 'version',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -4738,12 +5927,31 @@ export namespace Prisma {
   export type IncidentScalarFieldEnum = (typeof IncidentScalarFieldEnum)[keyof typeof IncidentScalarFieldEnum]
 
 
+  export const IncidentEventScalarFieldEnum: {
+    id: 'id',
+    incidentId: 'incidentId',
+    actorId: 'actorId',
+    eventType: 'eventType',
+    metadata: 'metadata',
+    createdAt: 'createdAt'
+  };
+
+  export type IncidentEventScalarFieldEnum = (typeof IncidentEventScalarFieldEnum)[keyof typeof IncidentEventScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
   export const QueryMode: {
@@ -4760,6 +5968,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -4810,27 +6027,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'CommentType'
-   */
-  export type EnumCommentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommentType'>
-    
-
-
-  /**
-   * Reference to a field of type 'CommentType[]'
-   */
-  export type ListEnumCommentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommentType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-  /**
    * Reference to a field of type 'Severity'
    */
   export type EnumSeverityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Severity'>
@@ -4873,6 +6069,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'EventType'
+   */
+  export type EnumEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EventType'>
+    
+
+
+  /**
+   * Reference to a field of type 'EventType[]'
+   */
+  export type ListEnumEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EventType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -4894,46 +6118,37 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     id?: StringFilter<"User"> | string
-    name?: StringNullableFilter<"User"> | string | null
-    email?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
-    createdAt?: DateTimeFilter<"User"> | Date | string
-    createdIncidents?: IncidentListRelationFilter
     ownedIncidents?: IncidentListRelationFilter
+    createdIncidents?: IncidentListRelationFilter
+    actedIncidentEvents?: IncidentEventListRelationFilter
     comments?: CommentListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
-    name?: SortOrderInput | SortOrder
-    email?: SortOrder
     role?: SortOrder
-    createdAt?: SortOrder
-    createdIncidents?: IncidentOrderByRelationAggregateInput
     ownedIncidents?: IncidentOrderByRelationAggregateInput
+    createdIncidents?: IncidentOrderByRelationAggregateInput
+    actedIncidentEvents?: IncidentEventOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    email?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    name?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
-    createdAt?: DateTimeFilter<"User"> | Date | string
-    createdIncidents?: IncidentListRelationFilter
     ownedIncidents?: IncidentListRelationFilter
+    createdIncidents?: IncidentListRelationFilter
+    actedIncidentEvents?: IncidentEventListRelationFilter
     comments?: CommentListRelationFilter
-  }, "id" | "email">
+  }, "id">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
-    name?: SortOrderInput | SortOrder
-    email?: SortOrder
     role?: SortOrder
-    createdAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -4944,10 +6159,7 @@ export namespace Prisma {
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"User"> | string
-    name?: StringNullableWithAggregatesFilter<"User"> | string | null
-    email?: StringWithAggregatesFilter<"User"> | string
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
-    createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
 
   export type CommentWhereInput = {
@@ -4958,10 +6170,7 @@ export namespace Prisma {
     incidentId?: StringFilter<"Comment"> | string
     authorId?: StringFilter<"Comment"> | string
     message?: StringFilter<"Comment"> | string
-    type?: EnumCommentTypeFilter<"Comment"> | $Enums.CommentType
     createdAt?: DateTimeFilter<"Comment"> | Date | string
-    editedAt?: DateTimeNullableFilter<"Comment"> | Date | string | null
-    isEdited?: BoolFilter<"Comment"> | boolean
     incident?: XOR<IncidentScalarRelationFilter, IncidentWhereInput>
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -4971,10 +6180,7 @@ export namespace Prisma {
     incidentId?: SortOrder
     authorId?: SortOrder
     message?: SortOrder
-    type?: SortOrder
     createdAt?: SortOrder
-    editedAt?: SortOrderInput | SortOrder
-    isEdited?: SortOrder
     incident?: IncidentOrderByWithRelationInput
     author?: UserOrderByWithRelationInput
   }
@@ -4987,10 +6193,7 @@ export namespace Prisma {
     incidentId?: StringFilter<"Comment"> | string
     authorId?: StringFilter<"Comment"> | string
     message?: StringFilter<"Comment"> | string
-    type?: EnumCommentTypeFilter<"Comment"> | $Enums.CommentType
     createdAt?: DateTimeFilter<"Comment"> | Date | string
-    editedAt?: DateTimeNullableFilter<"Comment"> | Date | string | null
-    isEdited?: BoolFilter<"Comment"> | boolean
     incident?: XOR<IncidentScalarRelationFilter, IncidentWhereInput>
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
@@ -5000,10 +6203,7 @@ export namespace Prisma {
     incidentId?: SortOrder
     authorId?: SortOrder
     message?: SortOrder
-    type?: SortOrder
     createdAt?: SortOrder
-    editedAt?: SortOrderInput | SortOrder
-    isEdited?: SortOrder
     _count?: CommentCountOrderByAggregateInput
     _max?: CommentMaxOrderByAggregateInput
     _min?: CommentMinOrderByAggregateInput
@@ -5017,10 +6217,7 @@ export namespace Prisma {
     incidentId?: StringWithAggregatesFilter<"Comment"> | string
     authorId?: StringWithAggregatesFilter<"Comment"> | string
     message?: StringWithAggregatesFilter<"Comment"> | string
-    type?: EnumCommentTypeWithAggregatesFilter<"Comment"> | $Enums.CommentType
     createdAt?: DateTimeWithAggregatesFilter<"Comment"> | Date | string
-    editedAt?: DateTimeNullableWithAggregatesFilter<"Comment"> | Date | string | null
-    isEdited?: BoolWithAggregatesFilter<"Comment"> | boolean
   }
 
   export type IncidentWhereInput = {
@@ -5030,42 +6227,44 @@ export namespace Prisma {
     id?: StringFilter<"Incident"> | string
     title?: StringFilter<"Incident"> | string
     description?: StringFilter<"Incident"> | string
-    severity?: EnumSeverityFilter<"Incident"> | $Enums.Severity
+    severity?: EnumSeverityNullableFilter<"Incident"> | $Enums.Severity | null
     status?: EnumStatusFilter<"Incident"> | $Enums.Status
-    slaTargetMinutes?: IntNullableFilter<"Incident"> | number | null
-    currentSlaStartAt?: DateTimeFilter<"Incident"> | Date | string
-    ownerId?: StringFilter<"Incident"> | string
-    createdById?: StringFilter<"Incident"> | string
     acknowledgedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
     resolvedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
     closedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
+    currentSlaStartAt?: DateTimeFilter<"Incident"> | Date | string
+    slaTargetMinutes?: IntNullableFilter<"Incident"> | number | null
+    ownerId?: StringFilter<"Incident"> | string
+    createdById?: StringFilter<"Incident"> | string
     version?: IntFilter<"Incident"> | number
     createdAt?: DateTimeFilter<"Incident"> | Date | string
     updatedAt?: DateTimeFilter<"Incident"> | Date | string
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     comments?: CommentListRelationFilter
+    events?: IncidentEventListRelationFilter
   }
 
   export type IncidentOrderByWithRelationInput = {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
-    severity?: SortOrder
+    severity?: SortOrderInput | SortOrder
     status?: SortOrder
-    slaTargetMinutes?: SortOrderInput | SortOrder
-    currentSlaStartAt?: SortOrder
-    ownerId?: SortOrder
-    createdById?: SortOrder
     acknowledgedAt?: SortOrderInput | SortOrder
     resolvedAt?: SortOrderInput | SortOrder
     closedAt?: SortOrderInput | SortOrder
+    currentSlaStartAt?: SortOrder
+    slaTargetMinutes?: SortOrderInput | SortOrder
+    ownerId?: SortOrder
+    createdById?: SortOrder
     version?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     owner?: UserOrderByWithRelationInput
     createdBy?: UserOrderByWithRelationInput
     comments?: CommentOrderByRelationAggregateInput
+    events?: IncidentEventOrderByRelationAggregateInput
   }
 
   export type IncidentWhereUniqueInput = Prisma.AtLeast<{
@@ -5075,36 +6274,37 @@ export namespace Prisma {
     NOT?: IncidentWhereInput | IncidentWhereInput[]
     title?: StringFilter<"Incident"> | string
     description?: StringFilter<"Incident"> | string
-    severity?: EnumSeverityFilter<"Incident"> | $Enums.Severity
+    severity?: EnumSeverityNullableFilter<"Incident"> | $Enums.Severity | null
     status?: EnumStatusFilter<"Incident"> | $Enums.Status
-    slaTargetMinutes?: IntNullableFilter<"Incident"> | number | null
-    currentSlaStartAt?: DateTimeFilter<"Incident"> | Date | string
-    ownerId?: StringFilter<"Incident"> | string
-    createdById?: StringFilter<"Incident"> | string
     acknowledgedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
     resolvedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
     closedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
+    currentSlaStartAt?: DateTimeFilter<"Incident"> | Date | string
+    slaTargetMinutes?: IntNullableFilter<"Incident"> | number | null
+    ownerId?: StringFilter<"Incident"> | string
+    createdById?: StringFilter<"Incident"> | string
     version?: IntFilter<"Incident"> | number
     createdAt?: DateTimeFilter<"Incident"> | Date | string
     updatedAt?: DateTimeFilter<"Incident"> | Date | string
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     comments?: CommentListRelationFilter
+    events?: IncidentEventListRelationFilter
   }, "id">
 
   export type IncidentOrderByWithAggregationInput = {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
-    severity?: SortOrder
+    severity?: SortOrderInput | SortOrder
     status?: SortOrder
-    slaTargetMinutes?: SortOrderInput | SortOrder
-    currentSlaStartAt?: SortOrder
-    ownerId?: SortOrder
-    createdById?: SortOrder
     acknowledgedAt?: SortOrderInput | SortOrder
     resolvedAt?: SortOrderInput | SortOrder
     closedAt?: SortOrderInput | SortOrder
+    currentSlaStartAt?: SortOrder
+    slaTargetMinutes?: SortOrderInput | SortOrder
+    ownerId?: SortOrder
+    createdById?: SortOrder
     version?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -5122,95 +6322,138 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Incident"> | string
     title?: StringWithAggregatesFilter<"Incident"> | string
     description?: StringWithAggregatesFilter<"Incident"> | string
-    severity?: EnumSeverityWithAggregatesFilter<"Incident"> | $Enums.Severity
+    severity?: EnumSeverityNullableWithAggregatesFilter<"Incident"> | $Enums.Severity | null
     status?: EnumStatusWithAggregatesFilter<"Incident"> | $Enums.Status
-    slaTargetMinutes?: IntNullableWithAggregatesFilter<"Incident"> | number | null
-    currentSlaStartAt?: DateTimeWithAggregatesFilter<"Incident"> | Date | string
-    ownerId?: StringWithAggregatesFilter<"Incident"> | string
-    createdById?: StringWithAggregatesFilter<"Incident"> | string
     acknowledgedAt?: DateTimeNullableWithAggregatesFilter<"Incident"> | Date | string | null
     resolvedAt?: DateTimeNullableWithAggregatesFilter<"Incident"> | Date | string | null
     closedAt?: DateTimeNullableWithAggregatesFilter<"Incident"> | Date | string | null
+    currentSlaStartAt?: DateTimeWithAggregatesFilter<"Incident"> | Date | string
+    slaTargetMinutes?: IntNullableWithAggregatesFilter<"Incident"> | number | null
+    ownerId?: StringWithAggregatesFilter<"Incident"> | string
+    createdById?: StringWithAggregatesFilter<"Incident"> | string
     version?: IntWithAggregatesFilter<"Incident"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Incident"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Incident"> | Date | string
   }
 
+  export type IncidentEventWhereInput = {
+    AND?: IncidentEventWhereInput | IncidentEventWhereInput[]
+    OR?: IncidentEventWhereInput[]
+    NOT?: IncidentEventWhereInput | IncidentEventWhereInput[]
+    id?: StringFilter<"IncidentEvent"> | string
+    incidentId?: StringFilter<"IncidentEvent"> | string
+    actorId?: StringNullableFilter<"IncidentEvent"> | string | null
+    eventType?: EnumEventTypeFilter<"IncidentEvent"> | $Enums.EventType
+    metadata?: JsonFilter<"IncidentEvent">
+    createdAt?: DateTimeFilter<"IncidentEvent"> | Date | string
+    incident?: XOR<IncidentScalarRelationFilter, IncidentWhereInput>
+    actor?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type IncidentEventOrderByWithRelationInput = {
+    id?: SortOrder
+    incidentId?: SortOrder
+    actorId?: SortOrderInput | SortOrder
+    eventType?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+    incident?: IncidentOrderByWithRelationInput
+    actor?: UserOrderByWithRelationInput
+  }
+
+  export type IncidentEventWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: IncidentEventWhereInput | IncidentEventWhereInput[]
+    OR?: IncidentEventWhereInput[]
+    NOT?: IncidentEventWhereInput | IncidentEventWhereInput[]
+    incidentId?: StringFilter<"IncidentEvent"> | string
+    actorId?: StringNullableFilter<"IncidentEvent"> | string | null
+    eventType?: EnumEventTypeFilter<"IncidentEvent"> | $Enums.EventType
+    metadata?: JsonFilter<"IncidentEvent">
+    createdAt?: DateTimeFilter<"IncidentEvent"> | Date | string
+    incident?: XOR<IncidentScalarRelationFilter, IncidentWhereInput>
+    actor?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type IncidentEventOrderByWithAggregationInput = {
+    id?: SortOrder
+    incidentId?: SortOrder
+    actorId?: SortOrderInput | SortOrder
+    eventType?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+    _count?: IncidentEventCountOrderByAggregateInput
+    _max?: IncidentEventMaxOrderByAggregateInput
+    _min?: IncidentEventMinOrderByAggregateInput
+  }
+
+  export type IncidentEventScalarWhereWithAggregatesInput = {
+    AND?: IncidentEventScalarWhereWithAggregatesInput | IncidentEventScalarWhereWithAggregatesInput[]
+    OR?: IncidentEventScalarWhereWithAggregatesInput[]
+    NOT?: IncidentEventScalarWhereWithAggregatesInput | IncidentEventScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"IncidentEvent"> | string
+    incidentId?: StringWithAggregatesFilter<"IncidentEvent"> | string
+    actorId?: StringNullableWithAggregatesFilter<"IncidentEvent"> | string | null
+    eventType?: EnumEventTypeWithAggregatesFilter<"IncidentEvent"> | $Enums.EventType
+    metadata?: JsonWithAggregatesFilter<"IncidentEvent">
+    createdAt?: DateTimeWithAggregatesFilter<"IncidentEvent"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
-    name?: string | null
-    email: string
     role?: $Enums.Role
-    createdAt?: Date | string
-    createdIncidents?: IncidentCreateNestedManyWithoutCreatedByInput
     ownedIncidents?: IncidentCreateNestedManyWithoutOwnerInput
+    createdIncidents?: IncidentCreateNestedManyWithoutCreatedByInput
+    actedIncidentEvents?: IncidentEventCreateNestedManyWithoutActorInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateInput = {
     id?: string
-    name?: string | null
-    email: string
     role?: $Enums.Role
-    createdAt?: Date | string
-    createdIncidents?: IncidentUncheckedCreateNestedManyWithoutCreatedByInput
     ownedIncidents?: IncidentUncheckedCreateNestedManyWithoutOwnerInput
+    createdIncidents?: IncidentUncheckedCreateNestedManyWithoutCreatedByInput
+    actedIncidentEvents?: IncidentEventUncheckedCreateNestedManyWithoutActorInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdIncidents?: IncidentUpdateManyWithoutCreatedByNestedInput
     ownedIncidents?: IncidentUpdateManyWithoutOwnerNestedInput
+    createdIncidents?: IncidentUpdateManyWithoutCreatedByNestedInput
+    actedIncidentEvents?: IncidentEventUpdateManyWithoutActorNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdIncidents?: IncidentUncheckedUpdateManyWithoutCreatedByNestedInput
     ownedIncidents?: IncidentUncheckedUpdateManyWithoutOwnerNestedInput
+    createdIncidents?: IncidentUncheckedUpdateManyWithoutCreatedByNestedInput
+    actedIncidentEvents?: IncidentEventUncheckedUpdateManyWithoutActorNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserCreateManyInput = {
     id?: string
-    name?: string | null
-    email: string
     role?: $Enums.Role
-    createdAt?: Date | string
   }
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CommentCreateInput = {
     id?: string
     message: string
-    type?: $Enums.CommentType
     createdAt?: Date | string
-    editedAt?: Date | string | null
-    isEdited?: boolean
     incident: IncidentCreateNestedOneWithoutCommentsInput
     author: UserCreateNestedOneWithoutCommentsInput
   }
@@ -5220,19 +6463,13 @@ export namespace Prisma {
     incidentId: string
     authorId: string
     message: string
-    type?: $Enums.CommentType
     createdAt?: Date | string
-    editedAt?: Date | string | null
-    isEdited?: boolean
   }
 
   export type CommentUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
-    type?: EnumCommentTypeFieldUpdateOperationsInput | $Enums.CommentType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    editedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    isEdited?: BoolFieldUpdateOperationsInput | boolean
     incident?: IncidentUpdateOneRequiredWithoutCommentsNestedInput
     author?: UserUpdateOneRequiredWithoutCommentsNestedInput
   }
@@ -5242,10 +6479,7 @@ export namespace Prisma {
     incidentId?: StringFieldUpdateOperationsInput | string
     authorId?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
-    type?: EnumCommentTypeFieldUpdateOperationsInput | $Enums.CommentType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    editedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    isEdited?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type CommentCreateManyInput = {
@@ -5253,19 +6487,13 @@ export namespace Prisma {
     incidentId: string
     authorId: string
     message: string
-    type?: $Enums.CommentType
     createdAt?: Date | string
-    editedAt?: Date | string | null
-    isEdited?: boolean
   }
 
   export type CommentUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
-    type?: EnumCommentTypeFieldUpdateOperationsInput | $Enums.CommentType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    editedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    isEdited?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type CommentUncheckedUpdateManyInput = {
@@ -5273,101 +6501,102 @@ export namespace Prisma {
     incidentId?: StringFieldUpdateOperationsInput | string
     authorId?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
-    type?: EnumCommentTypeFieldUpdateOperationsInput | $Enums.CommentType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    editedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    isEdited?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type IncidentCreateInput = {
     id?: string
     title: string
     description: string
-    severity: $Enums.Severity
+    severity?: $Enums.Severity | null
     status?: $Enums.Status
-    slaTargetMinutes?: number | null
-    currentSlaStartAt?: Date | string
     acknowledgedAt?: Date | string | null
     resolvedAt?: Date | string | null
     closedAt?: Date | string | null
+    currentSlaStartAt: Date | string
+    slaTargetMinutes?: number | null
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     owner: UserCreateNestedOneWithoutOwnedIncidentsInput
     createdBy: UserCreateNestedOneWithoutCreatedIncidentsInput
     comments?: CommentCreateNestedManyWithoutIncidentInput
+    events?: IncidentEventCreateNestedManyWithoutIncidentInput
   }
 
   export type IncidentUncheckedCreateInput = {
     id?: string
     title: string
     description: string
-    severity: $Enums.Severity
+    severity?: $Enums.Severity | null
     status?: $Enums.Status
-    slaTargetMinutes?: number | null
-    currentSlaStartAt?: Date | string
-    ownerId: string
-    createdById: string
     acknowledgedAt?: Date | string | null
     resolvedAt?: Date | string | null
     closedAt?: Date | string | null
+    currentSlaStartAt: Date | string
+    slaTargetMinutes?: number | null
+    ownerId: string
+    createdById: string
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     comments?: CommentUncheckedCreateNestedManyWithoutIncidentInput
+    events?: IncidentEventUncheckedCreateNestedManyWithoutIncidentInput
   }
 
   export type IncidentUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    severity?: EnumSeverityFieldUpdateOperationsInput | $Enums.Severity
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
-    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     owner?: UserUpdateOneRequiredWithoutOwnedIncidentsNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedIncidentsNestedInput
     comments?: CommentUpdateManyWithoutIncidentNestedInput
+    events?: IncidentEventUpdateManyWithoutIncidentNestedInput
   }
 
   export type IncidentUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    severity?: EnumSeverityFieldUpdateOperationsInput | $Enums.Severity
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
-    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    ownerId?: StringFieldUpdateOperationsInput | string
-    createdById?: StringFieldUpdateOperationsInput | string
     acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUncheckedUpdateManyWithoutIncidentNestedInput
+    events?: IncidentEventUncheckedUpdateManyWithoutIncidentNestedInput
   }
 
   export type IncidentCreateManyInput = {
     id?: string
     title: string
     description: string
-    severity: $Enums.Severity
+    severity?: $Enums.Severity | null
     status?: $Enums.Status
-    slaTargetMinutes?: number | null
-    currentSlaStartAt?: Date | string
-    ownerId: string
-    createdById: string
     acknowledgedAt?: Date | string | null
     resolvedAt?: Date | string | null
     closedAt?: Date | string | null
+    currentSlaStartAt: Date | string
+    slaTargetMinutes?: number | null
+    ownerId: string
+    createdById: string
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -5377,13 +6606,13 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    severity?: EnumSeverityFieldUpdateOperationsInput | $Enums.Severity
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
-    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5393,18 +6622,79 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    severity?: EnumSeverityFieldUpdateOperationsInput | $Enums.Severity
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
-    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    ownerId?: StringFieldUpdateOperationsInput | string
-    createdById?: StringFieldUpdateOperationsInput | string
     acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IncidentEventCreateInput = {
+    id?: string
+    eventType: $Enums.EventType
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    incident: IncidentCreateNestedOneWithoutEventsInput
+    actor?: UserCreateNestedOneWithoutActedIncidentEventsInput
+  }
+
+  export type IncidentEventUncheckedCreateInput = {
+    id?: string
+    incidentId: string
+    actorId?: string | null
+    eventType: $Enums.EventType
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type IncidentEventUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    eventType?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    incident?: IncidentUpdateOneRequiredWithoutEventsNestedInput
+    actor?: UserUpdateOneWithoutActedIncidentEventsNestedInput
+  }
+
+  export type IncidentEventUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    incidentId?: StringFieldUpdateOperationsInput | string
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IncidentEventCreateManyInput = {
+    id?: string
+    incidentId: string
+    actorId?: string | null
+    eventType: $Enums.EventType
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type IncidentEventUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    eventType?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IncidentEventUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    incidentId?: StringFieldUpdateOperationsInput | string
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -5422,37 +6712,11 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type EnumRoleFilter<$PrismaModel = never> = {
     equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
     in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
     notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
     not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
-  export type DateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
   export type IncidentListRelationFilter = {
@@ -5461,18 +6725,23 @@ export namespace Prisma {
     none?: IncidentWhereInput
   }
 
+  export type IncidentEventListRelationFilter = {
+    every?: IncidentEventWhereInput
+    some?: IncidentEventWhereInput
+    none?: IncidentEventWhereInput
+  }
+
   export type CommentListRelationFilter = {
     every?: CommentWhereInput
     some?: CommentWhereInput
     none?: CommentWhereInput
   }
 
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
+  export type IncidentOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
-  export type IncidentOrderByRelationAggregateInput = {
+  export type IncidentEventOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -5482,26 +6751,17 @@ export namespace Prisma {
 
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
-    email?: SortOrder
     role?: SortOrder
-    createdAt?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
-    email?: SortOrder
     role?: SortOrder
-    createdAt?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
-    email?: SortOrder
     role?: SortOrder
-    createdAt?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -5522,24 +6782,6 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
   export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
     in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
@@ -5550,7 +6792,7 @@ export namespace Prisma {
     _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+  export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -5558,33 +6800,7 @@ export namespace Prisma {
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type EnumCommentTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.CommentType | EnumCommentTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.CommentType[] | ListEnumCommentTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CommentType[] | ListEnumCommentTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumCommentTypeFilter<$PrismaModel> | $Enums.CommentType
-  }
-
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
   export type IncidentScalarRelationFilter = {
@@ -5602,10 +6818,7 @@ export namespace Prisma {
     incidentId?: SortOrder
     authorId?: SortOrder
     message?: SortOrder
-    type?: SortOrder
     createdAt?: SortOrder
-    editedAt?: SortOrder
-    isEdited?: SortOrder
   }
 
   export type CommentMaxOrderByAggregateInput = {
@@ -5613,10 +6826,7 @@ export namespace Prisma {
     incidentId?: SortOrder
     authorId?: SortOrder
     message?: SortOrder
-    type?: SortOrder
     createdAt?: SortOrder
-    editedAt?: SortOrder
-    isEdited?: SortOrder
   }
 
   export type CommentMinOrderByAggregateInput = {
@@ -5624,49 +6834,28 @@ export namespace Prisma {
     incidentId?: SortOrder
     authorId?: SortOrder
     message?: SortOrder
-    type?: SortOrder
     createdAt?: SortOrder
-    editedAt?: SortOrder
-    isEdited?: SortOrder
   }
 
-  export type EnumCommentTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.CommentType | EnumCommentTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.CommentType[] | ListEnumCommentTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CommentType[] | ListEnumCommentTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumCommentTypeWithAggregatesFilter<$PrismaModel> | $Enums.CommentType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumCommentTypeFilter<$PrismaModel>
-    _max?: NestedEnumCommentTypeFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type EnumSeverityFilter<$PrismaModel = never> = {
-    equals?: $Enums.Severity | EnumSeverityFieldRefInput<$PrismaModel>
-    in?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel>
-    not?: NestedEnumSeverityFilter<$PrismaModel> | $Enums.Severity
+  export type EnumSeverityNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Severity | EnumSeverityFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSeverityNullableFilter<$PrismaModel> | $Enums.Severity | null
   }
 
   export type EnumStatusFilter<$PrismaModel = never> = {
@@ -5674,6 +6863,17 @@ export namespace Prisma {
     in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumStatusFilter<$PrismaModel> | $Enums.Status
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
@@ -5698,19 +6898,24 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
   export type IncidentCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
     severity?: SortOrder
     status?: SortOrder
-    slaTargetMinutes?: SortOrder
-    currentSlaStartAt?: SortOrder
-    ownerId?: SortOrder
-    createdById?: SortOrder
     acknowledgedAt?: SortOrder
     resolvedAt?: SortOrder
     closedAt?: SortOrder
+    currentSlaStartAt?: SortOrder
+    slaTargetMinutes?: SortOrder
+    ownerId?: SortOrder
+    createdById?: SortOrder
     version?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -5727,13 +6932,13 @@ export namespace Prisma {
     description?: SortOrder
     severity?: SortOrder
     status?: SortOrder
-    slaTargetMinutes?: SortOrder
-    currentSlaStartAt?: SortOrder
-    ownerId?: SortOrder
-    createdById?: SortOrder
     acknowledgedAt?: SortOrder
     resolvedAt?: SortOrder
     closedAt?: SortOrder
+    currentSlaStartAt?: SortOrder
+    slaTargetMinutes?: SortOrder
+    ownerId?: SortOrder
+    createdById?: SortOrder
     version?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -5745,13 +6950,13 @@ export namespace Prisma {
     description?: SortOrder
     severity?: SortOrder
     status?: SortOrder
-    slaTargetMinutes?: SortOrder
-    currentSlaStartAt?: SortOrder
-    ownerId?: SortOrder
-    createdById?: SortOrder
     acknowledgedAt?: SortOrder
     resolvedAt?: SortOrder
     closedAt?: SortOrder
+    currentSlaStartAt?: SortOrder
+    slaTargetMinutes?: SortOrder
+    ownerId?: SortOrder
+    createdById?: SortOrder
     version?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -5762,14 +6967,14 @@ export namespace Prisma {
     version?: SortOrder
   }
 
-  export type EnumSeverityWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Severity | EnumSeverityFieldRefInput<$PrismaModel>
-    in?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel>
-    not?: NestedEnumSeverityWithAggregatesFilter<$PrismaModel> | $Enums.Severity
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumSeverityFilter<$PrismaModel>
-    _max?: NestedEnumSeverityFilter<$PrismaModel>
+  export type EnumSeverityNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Severity | EnumSeverityFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSeverityNullableWithAggregatesFilter<$PrismaModel> | $Enums.Severity | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSeverityNullableFilter<$PrismaModel>
+    _max?: NestedEnumSeverityNullableFilter<$PrismaModel>
   }
 
   export type EnumStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -5780,6 +6985,20 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumStatusFilter<$PrismaModel>
     _max?: NestedEnumStatusFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -5814,11 +7033,133 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type IncidentCreateNestedManyWithoutCreatedByInput = {
-    create?: XOR<IncidentCreateWithoutCreatedByInput, IncidentUncheckedCreateWithoutCreatedByInput> | IncidentCreateWithoutCreatedByInput[] | IncidentUncheckedCreateWithoutCreatedByInput[]
-    connectOrCreate?: IncidentCreateOrConnectWithoutCreatedByInput | IncidentCreateOrConnectWithoutCreatedByInput[]
-    createMany?: IncidentCreateManyCreatedByInputEnvelope
-    connect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type EnumEventTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.EventType | EnumEventTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.EventType[] | ListEnumEventTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EventType[] | ListEnumEventTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumEventTypeFilter<$PrismaModel> | $Enums.EventType
+  }
+  export type JsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type IncidentEventCountOrderByAggregateInput = {
+    id?: SortOrder
+    incidentId?: SortOrder
+    actorId?: SortOrder
+    eventType?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type IncidentEventMaxOrderByAggregateInput = {
+    id?: SortOrder
+    incidentId?: SortOrder
+    actorId?: SortOrder
+    eventType?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type IncidentEventMinOrderByAggregateInput = {
+    id?: SortOrder
+    incidentId?: SortOrder
+    actorId?: SortOrder
+    eventType?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type EnumEventTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EventType | EnumEventTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.EventType[] | ListEnumEventTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EventType[] | ListEnumEventTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumEventTypeWithAggregatesFilter<$PrismaModel> | $Enums.EventType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEventTypeFilter<$PrismaModel>
+    _max?: NestedEnumEventTypeFilter<$PrismaModel>
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type IncidentCreateNestedManyWithoutOwnerInput = {
@@ -5828,11 +7169,32 @@ export namespace Prisma {
     connect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
   }
 
+  export type IncidentCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<IncidentCreateWithoutCreatedByInput, IncidentUncheckedCreateWithoutCreatedByInput> | IncidentCreateWithoutCreatedByInput[] | IncidentUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: IncidentCreateOrConnectWithoutCreatedByInput | IncidentCreateOrConnectWithoutCreatedByInput[]
+    createMany?: IncidentCreateManyCreatedByInputEnvelope
+    connect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
+  }
+
+  export type IncidentEventCreateNestedManyWithoutActorInput = {
+    create?: XOR<IncidentEventCreateWithoutActorInput, IncidentEventUncheckedCreateWithoutActorInput> | IncidentEventCreateWithoutActorInput[] | IncidentEventUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: IncidentEventCreateOrConnectWithoutActorInput | IncidentEventCreateOrConnectWithoutActorInput[]
+    createMany?: IncidentEventCreateManyActorInputEnvelope
+    connect?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+  }
+
   export type CommentCreateNestedManyWithoutAuthorInput = {
     create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
     createMany?: CommentCreateManyAuthorInputEnvelope
     connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+  }
+
+  export type IncidentUncheckedCreateNestedManyWithoutOwnerInput = {
+    create?: XOR<IncidentCreateWithoutOwnerInput, IncidentUncheckedCreateWithoutOwnerInput> | IncidentCreateWithoutOwnerInput[] | IncidentUncheckedCreateWithoutOwnerInput[]
+    connectOrCreate?: IncidentCreateOrConnectWithoutOwnerInput | IncidentCreateOrConnectWithoutOwnerInput[]
+    createMany?: IncidentCreateManyOwnerInputEnvelope
+    connect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
   }
 
   export type IncidentUncheckedCreateNestedManyWithoutCreatedByInput = {
@@ -5842,11 +7204,11 @@ export namespace Prisma {
     connect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
   }
 
-  export type IncidentUncheckedCreateNestedManyWithoutOwnerInput = {
-    create?: XOR<IncidentCreateWithoutOwnerInput, IncidentUncheckedCreateWithoutOwnerInput> | IncidentCreateWithoutOwnerInput[] | IncidentUncheckedCreateWithoutOwnerInput[]
-    connectOrCreate?: IncidentCreateOrConnectWithoutOwnerInput | IncidentCreateOrConnectWithoutOwnerInput[]
-    createMany?: IncidentCreateManyOwnerInputEnvelope
-    connect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
+  export type IncidentEventUncheckedCreateNestedManyWithoutActorInput = {
+    create?: XOR<IncidentEventCreateWithoutActorInput, IncidentEventUncheckedCreateWithoutActorInput> | IncidentEventCreateWithoutActorInput[] | IncidentEventUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: IncidentEventCreateOrConnectWithoutActorInput | IncidentEventCreateOrConnectWithoutActorInput[]
+    createMany?: IncidentEventCreateManyActorInputEnvelope
+    connect?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
   }
 
   export type CommentUncheckedCreateNestedManyWithoutAuthorInput = {
@@ -5860,30 +7222,8 @@ export namespace Prisma {
     set?: string
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
   export type EnumRoleFieldUpdateOperationsInput = {
     set?: $Enums.Role
-  }
-
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
-  }
-
-  export type IncidentUpdateManyWithoutCreatedByNestedInput = {
-    create?: XOR<IncidentCreateWithoutCreatedByInput, IncidentUncheckedCreateWithoutCreatedByInput> | IncidentCreateWithoutCreatedByInput[] | IncidentUncheckedCreateWithoutCreatedByInput[]
-    connectOrCreate?: IncidentCreateOrConnectWithoutCreatedByInput | IncidentCreateOrConnectWithoutCreatedByInput[]
-    upsert?: IncidentUpsertWithWhereUniqueWithoutCreatedByInput | IncidentUpsertWithWhereUniqueWithoutCreatedByInput[]
-    createMany?: IncidentCreateManyCreatedByInputEnvelope
-    set?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
-    disconnect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
-    delete?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
-    connect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
-    update?: IncidentUpdateWithWhereUniqueWithoutCreatedByInput | IncidentUpdateWithWhereUniqueWithoutCreatedByInput[]
-    updateMany?: IncidentUpdateManyWithWhereWithoutCreatedByInput | IncidentUpdateManyWithWhereWithoutCreatedByInput[]
-    deleteMany?: IncidentScalarWhereInput | IncidentScalarWhereInput[]
   }
 
   export type IncidentUpdateManyWithoutOwnerNestedInput = {
@@ -5900,6 +7240,34 @@ export namespace Prisma {
     deleteMany?: IncidentScalarWhereInput | IncidentScalarWhereInput[]
   }
 
+  export type IncidentUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<IncidentCreateWithoutCreatedByInput, IncidentUncheckedCreateWithoutCreatedByInput> | IncidentCreateWithoutCreatedByInput[] | IncidentUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: IncidentCreateOrConnectWithoutCreatedByInput | IncidentCreateOrConnectWithoutCreatedByInput[]
+    upsert?: IncidentUpsertWithWhereUniqueWithoutCreatedByInput | IncidentUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: IncidentCreateManyCreatedByInputEnvelope
+    set?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
+    disconnect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
+    delete?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
+    connect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
+    update?: IncidentUpdateWithWhereUniqueWithoutCreatedByInput | IncidentUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: IncidentUpdateManyWithWhereWithoutCreatedByInput | IncidentUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: IncidentScalarWhereInput | IncidentScalarWhereInput[]
+  }
+
+  export type IncidentEventUpdateManyWithoutActorNestedInput = {
+    create?: XOR<IncidentEventCreateWithoutActorInput, IncidentEventUncheckedCreateWithoutActorInput> | IncidentEventCreateWithoutActorInput[] | IncidentEventUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: IncidentEventCreateOrConnectWithoutActorInput | IncidentEventCreateOrConnectWithoutActorInput[]
+    upsert?: IncidentEventUpsertWithWhereUniqueWithoutActorInput | IncidentEventUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: IncidentEventCreateManyActorInputEnvelope
+    set?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    disconnect?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    delete?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    connect?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    update?: IncidentEventUpdateWithWhereUniqueWithoutActorInput | IncidentEventUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: IncidentEventUpdateManyWithWhereWithoutActorInput | IncidentEventUpdateManyWithWhereWithoutActorInput[]
+    deleteMany?: IncidentEventScalarWhereInput | IncidentEventScalarWhereInput[]
+  }
+
   export type CommentUpdateManyWithoutAuthorNestedInput = {
     create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
@@ -5912,6 +7280,20 @@ export namespace Prisma {
     update?: CommentUpdateWithWhereUniqueWithoutAuthorInput | CommentUpdateWithWhereUniqueWithoutAuthorInput[]
     updateMany?: CommentUpdateManyWithWhereWithoutAuthorInput | CommentUpdateManyWithWhereWithoutAuthorInput[]
     deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
+  export type IncidentUncheckedUpdateManyWithoutOwnerNestedInput = {
+    create?: XOR<IncidentCreateWithoutOwnerInput, IncidentUncheckedCreateWithoutOwnerInput> | IncidentCreateWithoutOwnerInput[] | IncidentUncheckedCreateWithoutOwnerInput[]
+    connectOrCreate?: IncidentCreateOrConnectWithoutOwnerInput | IncidentCreateOrConnectWithoutOwnerInput[]
+    upsert?: IncidentUpsertWithWhereUniqueWithoutOwnerInput | IncidentUpsertWithWhereUniqueWithoutOwnerInput[]
+    createMany?: IncidentCreateManyOwnerInputEnvelope
+    set?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
+    disconnect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
+    delete?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
+    connect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
+    update?: IncidentUpdateWithWhereUniqueWithoutOwnerInput | IncidentUpdateWithWhereUniqueWithoutOwnerInput[]
+    updateMany?: IncidentUpdateManyWithWhereWithoutOwnerInput | IncidentUpdateManyWithWhereWithoutOwnerInput[]
+    deleteMany?: IncidentScalarWhereInput | IncidentScalarWhereInput[]
   }
 
   export type IncidentUncheckedUpdateManyWithoutCreatedByNestedInput = {
@@ -5928,18 +7310,18 @@ export namespace Prisma {
     deleteMany?: IncidentScalarWhereInput | IncidentScalarWhereInput[]
   }
 
-  export type IncidentUncheckedUpdateManyWithoutOwnerNestedInput = {
-    create?: XOR<IncidentCreateWithoutOwnerInput, IncidentUncheckedCreateWithoutOwnerInput> | IncidentCreateWithoutOwnerInput[] | IncidentUncheckedCreateWithoutOwnerInput[]
-    connectOrCreate?: IncidentCreateOrConnectWithoutOwnerInput | IncidentCreateOrConnectWithoutOwnerInput[]
-    upsert?: IncidentUpsertWithWhereUniqueWithoutOwnerInput | IncidentUpsertWithWhereUniqueWithoutOwnerInput[]
-    createMany?: IncidentCreateManyOwnerInputEnvelope
-    set?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
-    disconnect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
-    delete?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
-    connect?: IncidentWhereUniqueInput | IncidentWhereUniqueInput[]
-    update?: IncidentUpdateWithWhereUniqueWithoutOwnerInput | IncidentUpdateWithWhereUniqueWithoutOwnerInput[]
-    updateMany?: IncidentUpdateManyWithWhereWithoutOwnerInput | IncidentUpdateManyWithWhereWithoutOwnerInput[]
-    deleteMany?: IncidentScalarWhereInput | IncidentScalarWhereInput[]
+  export type IncidentEventUncheckedUpdateManyWithoutActorNestedInput = {
+    create?: XOR<IncidentEventCreateWithoutActorInput, IncidentEventUncheckedCreateWithoutActorInput> | IncidentEventCreateWithoutActorInput[] | IncidentEventUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: IncidentEventCreateOrConnectWithoutActorInput | IncidentEventCreateOrConnectWithoutActorInput[]
+    upsert?: IncidentEventUpsertWithWhereUniqueWithoutActorInput | IncidentEventUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: IncidentEventCreateManyActorInputEnvelope
+    set?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    disconnect?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    delete?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    connect?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    update?: IncidentEventUpdateWithWhereUniqueWithoutActorInput | IncidentEventUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: IncidentEventUpdateManyWithWhereWithoutActorInput | IncidentEventUpdateManyWithWhereWithoutActorInput[]
+    deleteMany?: IncidentEventScalarWhereInput | IncidentEventScalarWhereInput[]
   }
 
   export type CommentUncheckedUpdateManyWithoutAuthorNestedInput = {
@@ -5968,16 +7350,8 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type EnumCommentTypeFieldUpdateOperationsInput = {
-    set?: $Enums.CommentType
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
   }
 
   export type IncidentUpdateOneRequiredWithoutCommentsNestedInput = {
@@ -6015,6 +7389,13 @@ export namespace Prisma {
     connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
   }
 
+  export type IncidentEventCreateNestedManyWithoutIncidentInput = {
+    create?: XOR<IncidentEventCreateWithoutIncidentInput, IncidentEventUncheckedCreateWithoutIncidentInput> | IncidentEventCreateWithoutIncidentInput[] | IncidentEventUncheckedCreateWithoutIncidentInput[]
+    connectOrCreate?: IncidentEventCreateOrConnectWithoutIncidentInput | IncidentEventCreateOrConnectWithoutIncidentInput[]
+    createMany?: IncidentEventCreateManyIncidentInputEnvelope
+    connect?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+  }
+
   export type CommentUncheckedCreateNestedManyWithoutIncidentInput = {
     create?: XOR<CommentCreateWithoutIncidentInput, CommentUncheckedCreateWithoutIncidentInput> | CommentCreateWithoutIncidentInput[] | CommentUncheckedCreateWithoutIncidentInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutIncidentInput | CommentCreateOrConnectWithoutIncidentInput[]
@@ -6022,12 +7403,23 @@ export namespace Prisma {
     connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
   }
 
-  export type EnumSeverityFieldUpdateOperationsInput = {
-    set?: $Enums.Severity
+  export type IncidentEventUncheckedCreateNestedManyWithoutIncidentInput = {
+    create?: XOR<IncidentEventCreateWithoutIncidentInput, IncidentEventUncheckedCreateWithoutIncidentInput> | IncidentEventCreateWithoutIncidentInput[] | IncidentEventUncheckedCreateWithoutIncidentInput[]
+    connectOrCreate?: IncidentEventCreateOrConnectWithoutIncidentInput | IncidentEventCreateOrConnectWithoutIncidentInput[]
+    createMany?: IncidentEventCreateManyIncidentInputEnvelope
+    connect?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+  }
+
+  export type NullableEnumSeverityFieldUpdateOperationsInput = {
+    set?: $Enums.Severity | null
   }
 
   export type EnumStatusFieldUpdateOperationsInput = {
     set?: $Enums.Status
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -6076,6 +7468,20 @@ export namespace Prisma {
     deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
   }
 
+  export type IncidentEventUpdateManyWithoutIncidentNestedInput = {
+    create?: XOR<IncidentEventCreateWithoutIncidentInput, IncidentEventUncheckedCreateWithoutIncidentInput> | IncidentEventCreateWithoutIncidentInput[] | IncidentEventUncheckedCreateWithoutIncidentInput[]
+    connectOrCreate?: IncidentEventCreateOrConnectWithoutIncidentInput | IncidentEventCreateOrConnectWithoutIncidentInput[]
+    upsert?: IncidentEventUpsertWithWhereUniqueWithoutIncidentInput | IncidentEventUpsertWithWhereUniqueWithoutIncidentInput[]
+    createMany?: IncidentEventCreateManyIncidentInputEnvelope
+    set?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    disconnect?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    delete?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    connect?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    update?: IncidentEventUpdateWithWhereUniqueWithoutIncidentInput | IncidentEventUpdateWithWhereUniqueWithoutIncidentInput[]
+    updateMany?: IncidentEventUpdateManyWithWhereWithoutIncidentInput | IncidentEventUpdateManyWithWhereWithoutIncidentInput[]
+    deleteMany?: IncidentEventScalarWhereInput | IncidentEventScalarWhereInput[]
+  }
+
   export type CommentUncheckedUpdateManyWithoutIncidentNestedInput = {
     create?: XOR<CommentCreateWithoutIncidentInput, CommentUncheckedCreateWithoutIncidentInput> | CommentCreateWithoutIncidentInput[] | CommentUncheckedCreateWithoutIncidentInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutIncidentInput | CommentCreateOrConnectWithoutIncidentInput[]
@@ -6088,6 +7494,58 @@ export namespace Prisma {
     update?: CommentUpdateWithWhereUniqueWithoutIncidentInput | CommentUpdateWithWhereUniqueWithoutIncidentInput[]
     updateMany?: CommentUpdateManyWithWhereWithoutIncidentInput | CommentUpdateManyWithWhereWithoutIncidentInput[]
     deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
+  export type IncidentEventUncheckedUpdateManyWithoutIncidentNestedInput = {
+    create?: XOR<IncidentEventCreateWithoutIncidentInput, IncidentEventUncheckedCreateWithoutIncidentInput> | IncidentEventCreateWithoutIncidentInput[] | IncidentEventUncheckedCreateWithoutIncidentInput[]
+    connectOrCreate?: IncidentEventCreateOrConnectWithoutIncidentInput | IncidentEventCreateOrConnectWithoutIncidentInput[]
+    upsert?: IncidentEventUpsertWithWhereUniqueWithoutIncidentInput | IncidentEventUpsertWithWhereUniqueWithoutIncidentInput[]
+    createMany?: IncidentEventCreateManyIncidentInputEnvelope
+    set?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    disconnect?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    delete?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    connect?: IncidentEventWhereUniqueInput | IncidentEventWhereUniqueInput[]
+    update?: IncidentEventUpdateWithWhereUniqueWithoutIncidentInput | IncidentEventUpdateWithWhereUniqueWithoutIncidentInput[]
+    updateMany?: IncidentEventUpdateManyWithWhereWithoutIncidentInput | IncidentEventUpdateManyWithWhereWithoutIncidentInput[]
+    deleteMany?: IncidentEventScalarWhereInput | IncidentEventScalarWhereInput[]
+  }
+
+  export type IncidentCreateNestedOneWithoutEventsInput = {
+    create?: XOR<IncidentCreateWithoutEventsInput, IncidentUncheckedCreateWithoutEventsInput>
+    connectOrCreate?: IncidentCreateOrConnectWithoutEventsInput
+    connect?: IncidentWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutActedIncidentEventsInput = {
+    create?: XOR<UserCreateWithoutActedIncidentEventsInput, UserUncheckedCreateWithoutActedIncidentEventsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutActedIncidentEventsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumEventTypeFieldUpdateOperationsInput = {
+    set?: $Enums.EventType
+  }
+
+  export type IncidentUpdateOneRequiredWithoutEventsNestedInput = {
+    create?: XOR<IncidentCreateWithoutEventsInput, IncidentUncheckedCreateWithoutEventsInput>
+    connectOrCreate?: IncidentCreateOrConnectWithoutEventsInput
+    upsert?: IncidentUpsertWithoutEventsInput
+    connect?: IncidentWhereUniqueInput
+    update?: XOR<XOR<IncidentUpdateToOneWithWhereWithoutEventsInput, IncidentUpdateWithoutEventsInput>, IncidentUncheckedUpdateWithoutEventsInput>
+  }
+
+  export type UserUpdateOneWithoutActedIncidentEventsNestedInput = {
+    create?: XOR<UserCreateWithoutActedIncidentEventsInput, UserUncheckedCreateWithoutActedIncidentEventsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutActedIncidentEventsInput
+    upsert?: UserUpsertWithoutActedIncidentEventsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutActedIncidentEventsInput, UserUpdateWithoutActedIncidentEventsInput>, UserUncheckedUpdateWithoutActedIncidentEventsInput>
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -6104,36 +7562,11 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type NestedEnumRoleFilter<$PrismaModel = never> = {
     equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
     in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
     notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
     not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
-  export type NestedDateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -6164,34 +7597,6 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
     in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
@@ -6200,6 +7605,17 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumRoleFilter<$PrismaModel>
     _max?: NestedEnumRoleFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -6216,11 +7632,18 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedEnumCommentTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.CommentType | EnumCommentTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.CommentType[] | ListEnumCommentTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CommentType[] | ListEnumCommentTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumCommentTypeFilter<$PrismaModel> | $Enums.CommentType
+  export type NestedEnumSeverityNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Severity | EnumSeverityFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSeverityNullableFilter<$PrismaModel> | $Enums.Severity | null
+  }
+
+  export type NestedEnumStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStatusFilter<$PrismaModel> | $Enums.Status
   }
 
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
@@ -6234,19 +7657,35 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedEnumCommentTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.CommentType | EnumCommentTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.CommentType[] | ListEnumCommentTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CommentType[] | ListEnumCommentTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumCommentTypeWithAggregatesFilter<$PrismaModel> | $Enums.CommentType
+  export type NestedEnumSeverityNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Severity | EnumSeverityFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSeverityNullableWithAggregatesFilter<$PrismaModel> | $Enums.Severity | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSeverityNullableFilter<$PrismaModel>
+    _max?: NestedEnumSeverityNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStatusWithAggregatesFilter<$PrismaModel> | $Enums.Status
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumCommentTypeFilter<$PrismaModel>
-    _max?: NestedEnumCommentTypeFilter<$PrismaModel>
+    _min?: NestedEnumStatusFilter<$PrismaModel>
+    _max?: NestedEnumStatusFilter<$PrismaModel>
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -6261,48 +7700,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type NestedEnumSeverityFilter<$PrismaModel = never> = {
-    equals?: $Enums.Severity | EnumSeverityFieldRefInput<$PrismaModel>
-    in?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel>
-    not?: NestedEnumSeverityFilter<$PrismaModel> | $Enums.Severity
-  }
-
-  export type NestedEnumStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumStatusFilter<$PrismaModel> | $Enums.Status
-  }
-
-  export type NestedEnumSeverityWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Severity | EnumSeverityFieldRefInput<$PrismaModel>
-    in?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Severity[] | ListEnumSeverityFieldRefInput<$PrismaModel>
-    not?: NestedEnumSeverityWithAggregatesFilter<$PrismaModel> | $Enums.Severity
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumSeverityFilter<$PrismaModel>
-    _max?: NestedEnumSeverityFilter<$PrismaModel>
-  }
-
-  export type NestedEnumStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumStatusWithAggregatesFilter<$PrismaModel> | $Enums.Status
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumStatusFilter<$PrismaModel>
-    _max?: NestedEnumStatusFilter<$PrismaModel>
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -6359,86 +7756,113 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type IncidentCreateWithoutCreatedByInput = {
-    id?: string
-    title: string
-    description: string
-    severity: $Enums.Severity
-    status?: $Enums.Status
-    slaTargetMinutes?: number | null
-    currentSlaStartAt?: Date | string
-    acknowledgedAt?: Date | string | null
-    resolvedAt?: Date | string | null
-    closedAt?: Date | string | null
-    version?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    owner: UserCreateNestedOneWithoutOwnedIncidentsInput
-    comments?: CommentCreateNestedManyWithoutIncidentInput
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type IncidentUncheckedCreateWithoutCreatedByInput = {
-    id?: string
-    title: string
-    description: string
-    severity: $Enums.Severity
-    status?: $Enums.Status
-    slaTargetMinutes?: number | null
-    currentSlaStartAt?: Date | string
-    ownerId: string
-    acknowledgedAt?: Date | string | null
-    resolvedAt?: Date | string | null
-    closedAt?: Date | string | null
-    version?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    comments?: CommentUncheckedCreateNestedManyWithoutIncidentInput
+  export type NestedEnumEventTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.EventType | EnumEventTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.EventType[] | ListEnumEventTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EventType[] | ListEnumEventTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumEventTypeFilter<$PrismaModel> | $Enums.EventType
   }
 
-  export type IncidentCreateOrConnectWithoutCreatedByInput = {
-    where: IncidentWhereUniqueInput
-    create: XOR<IncidentCreateWithoutCreatedByInput, IncidentUncheckedCreateWithoutCreatedByInput>
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type IncidentCreateManyCreatedByInputEnvelope = {
-    data: IncidentCreateManyCreatedByInput | IncidentCreateManyCreatedByInput[]
-    skipDuplicates?: boolean
+  export type NestedEnumEventTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EventType | EnumEventTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.EventType[] | ListEnumEventTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EventType[] | ListEnumEventTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumEventTypeWithAggregatesFilter<$PrismaModel> | $Enums.EventType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEventTypeFilter<$PrismaModel>
+    _max?: NestedEnumEventTypeFilter<$PrismaModel>
+  }
+  export type NestedJsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type IncidentCreateWithoutOwnerInput = {
     id?: string
     title: string
     description: string
-    severity: $Enums.Severity
+    severity?: $Enums.Severity | null
     status?: $Enums.Status
-    slaTargetMinutes?: number | null
-    currentSlaStartAt?: Date | string
     acknowledgedAt?: Date | string | null
     resolvedAt?: Date | string | null
     closedAt?: Date | string | null
+    currentSlaStartAt: Date | string
+    slaTargetMinutes?: number | null
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     createdBy: UserCreateNestedOneWithoutCreatedIncidentsInput
     comments?: CommentCreateNestedManyWithoutIncidentInput
+    events?: IncidentEventCreateNestedManyWithoutIncidentInput
   }
 
   export type IncidentUncheckedCreateWithoutOwnerInput = {
     id?: string
     title: string
     description: string
-    severity: $Enums.Severity
+    severity?: $Enums.Severity | null
     status?: $Enums.Status
-    slaTargetMinutes?: number | null
-    currentSlaStartAt?: Date | string
-    createdById: string
     acknowledgedAt?: Date | string | null
     resolvedAt?: Date | string | null
     closedAt?: Date | string | null
+    currentSlaStartAt: Date | string
+    slaTargetMinutes?: number | null
+    createdById: string
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     comments?: CommentUncheckedCreateNestedManyWithoutIncidentInput
+    events?: IncidentEventUncheckedCreateNestedManyWithoutIncidentInput
   }
 
   export type IncidentCreateOrConnectWithoutOwnerInput = {
@@ -6451,13 +7875,84 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type IncidentCreateWithoutCreatedByInput = {
+    id?: string
+    title: string
+    description: string
+    severity?: $Enums.Severity | null
+    status?: $Enums.Status
+    acknowledgedAt?: Date | string | null
+    resolvedAt?: Date | string | null
+    closedAt?: Date | string | null
+    currentSlaStartAt: Date | string
+    slaTargetMinutes?: number | null
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    owner: UserCreateNestedOneWithoutOwnedIncidentsInput
+    comments?: CommentCreateNestedManyWithoutIncidentInput
+    events?: IncidentEventCreateNestedManyWithoutIncidentInput
+  }
+
+  export type IncidentUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    title: string
+    description: string
+    severity?: $Enums.Severity | null
+    status?: $Enums.Status
+    acknowledgedAt?: Date | string | null
+    resolvedAt?: Date | string | null
+    closedAt?: Date | string | null
+    currentSlaStartAt: Date | string
+    slaTargetMinutes?: number | null
+    ownerId: string
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    comments?: CommentUncheckedCreateNestedManyWithoutIncidentInput
+    events?: IncidentEventUncheckedCreateNestedManyWithoutIncidentInput
+  }
+
+  export type IncidentCreateOrConnectWithoutCreatedByInput = {
+    where: IncidentWhereUniqueInput
+    create: XOR<IncidentCreateWithoutCreatedByInput, IncidentUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type IncidentCreateManyCreatedByInputEnvelope = {
+    data: IncidentCreateManyCreatedByInput | IncidentCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type IncidentEventCreateWithoutActorInput = {
+    id?: string
+    eventType: $Enums.EventType
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    incident: IncidentCreateNestedOneWithoutEventsInput
+  }
+
+  export type IncidentEventUncheckedCreateWithoutActorInput = {
+    id?: string
+    incidentId: string
+    eventType: $Enums.EventType
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type IncidentEventCreateOrConnectWithoutActorInput = {
+    where: IncidentEventWhereUniqueInput
+    create: XOR<IncidentEventCreateWithoutActorInput, IncidentEventUncheckedCreateWithoutActorInput>
+  }
+
+  export type IncidentEventCreateManyActorInputEnvelope = {
+    data: IncidentEventCreateManyActorInput | IncidentEventCreateManyActorInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CommentCreateWithoutAuthorInput = {
     id?: string
     message: string
-    type?: $Enums.CommentType
     createdAt?: Date | string
-    editedAt?: Date | string | null
-    isEdited?: boolean
     incident: IncidentCreateNestedOneWithoutCommentsInput
   }
 
@@ -6465,10 +7960,7 @@ export namespace Prisma {
     id?: string
     incidentId: string
     message: string
-    type?: $Enums.CommentType
     createdAt?: Date | string
-    editedAt?: Date | string | null
-    isEdited?: boolean
   }
 
   export type CommentCreateOrConnectWithoutAuthorInput = {
@@ -6479,6 +7971,43 @@ export namespace Prisma {
   export type CommentCreateManyAuthorInputEnvelope = {
     data: CommentCreateManyAuthorInput | CommentCreateManyAuthorInput[]
     skipDuplicates?: boolean
+  }
+
+  export type IncidentUpsertWithWhereUniqueWithoutOwnerInput = {
+    where: IncidentWhereUniqueInput
+    update: XOR<IncidentUpdateWithoutOwnerInput, IncidentUncheckedUpdateWithoutOwnerInput>
+    create: XOR<IncidentCreateWithoutOwnerInput, IncidentUncheckedCreateWithoutOwnerInput>
+  }
+
+  export type IncidentUpdateWithWhereUniqueWithoutOwnerInput = {
+    where: IncidentWhereUniqueInput
+    data: XOR<IncidentUpdateWithoutOwnerInput, IncidentUncheckedUpdateWithoutOwnerInput>
+  }
+
+  export type IncidentUpdateManyWithWhereWithoutOwnerInput = {
+    where: IncidentScalarWhereInput
+    data: XOR<IncidentUpdateManyMutationInput, IncidentUncheckedUpdateManyWithoutOwnerInput>
+  }
+
+  export type IncidentScalarWhereInput = {
+    AND?: IncidentScalarWhereInput | IncidentScalarWhereInput[]
+    OR?: IncidentScalarWhereInput[]
+    NOT?: IncidentScalarWhereInput | IncidentScalarWhereInput[]
+    id?: StringFilter<"Incident"> | string
+    title?: StringFilter<"Incident"> | string
+    description?: StringFilter<"Incident"> | string
+    severity?: EnumSeverityNullableFilter<"Incident"> | $Enums.Severity | null
+    status?: EnumStatusFilter<"Incident"> | $Enums.Status
+    acknowledgedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
+    resolvedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
+    closedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
+    currentSlaStartAt?: DateTimeFilter<"Incident"> | Date | string
+    slaTargetMinutes?: IntNullableFilter<"Incident"> | number | null
+    ownerId?: StringFilter<"Incident"> | string
+    createdById?: StringFilter<"Incident"> | string
+    version?: IntFilter<"Incident"> | number
+    createdAt?: DateTimeFilter<"Incident"> | Date | string
+    updatedAt?: DateTimeFilter<"Incident"> | Date | string
   }
 
   export type IncidentUpsertWithWhereUniqueWithoutCreatedByInput = {
@@ -6497,41 +8026,32 @@ export namespace Prisma {
     data: XOR<IncidentUpdateManyMutationInput, IncidentUncheckedUpdateManyWithoutCreatedByInput>
   }
 
-  export type IncidentScalarWhereInput = {
-    AND?: IncidentScalarWhereInput | IncidentScalarWhereInput[]
-    OR?: IncidentScalarWhereInput[]
-    NOT?: IncidentScalarWhereInput | IncidentScalarWhereInput[]
-    id?: StringFilter<"Incident"> | string
-    title?: StringFilter<"Incident"> | string
-    description?: StringFilter<"Incident"> | string
-    severity?: EnumSeverityFilter<"Incident"> | $Enums.Severity
-    status?: EnumStatusFilter<"Incident"> | $Enums.Status
-    slaTargetMinutes?: IntNullableFilter<"Incident"> | number | null
-    currentSlaStartAt?: DateTimeFilter<"Incident"> | Date | string
-    ownerId?: StringFilter<"Incident"> | string
-    createdById?: StringFilter<"Incident"> | string
-    acknowledgedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
-    resolvedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
-    closedAt?: DateTimeNullableFilter<"Incident"> | Date | string | null
-    version?: IntFilter<"Incident"> | number
-    createdAt?: DateTimeFilter<"Incident"> | Date | string
-    updatedAt?: DateTimeFilter<"Incident"> | Date | string
+  export type IncidentEventUpsertWithWhereUniqueWithoutActorInput = {
+    where: IncidentEventWhereUniqueInput
+    update: XOR<IncidentEventUpdateWithoutActorInput, IncidentEventUncheckedUpdateWithoutActorInput>
+    create: XOR<IncidentEventCreateWithoutActorInput, IncidentEventUncheckedCreateWithoutActorInput>
   }
 
-  export type IncidentUpsertWithWhereUniqueWithoutOwnerInput = {
-    where: IncidentWhereUniqueInput
-    update: XOR<IncidentUpdateWithoutOwnerInput, IncidentUncheckedUpdateWithoutOwnerInput>
-    create: XOR<IncidentCreateWithoutOwnerInput, IncidentUncheckedCreateWithoutOwnerInput>
+  export type IncidentEventUpdateWithWhereUniqueWithoutActorInput = {
+    where: IncidentEventWhereUniqueInput
+    data: XOR<IncidentEventUpdateWithoutActorInput, IncidentEventUncheckedUpdateWithoutActorInput>
   }
 
-  export type IncidentUpdateWithWhereUniqueWithoutOwnerInput = {
-    where: IncidentWhereUniqueInput
-    data: XOR<IncidentUpdateWithoutOwnerInput, IncidentUncheckedUpdateWithoutOwnerInput>
+  export type IncidentEventUpdateManyWithWhereWithoutActorInput = {
+    where: IncidentEventScalarWhereInput
+    data: XOR<IncidentEventUpdateManyMutationInput, IncidentEventUncheckedUpdateManyWithoutActorInput>
   }
 
-  export type IncidentUpdateManyWithWhereWithoutOwnerInput = {
-    where: IncidentScalarWhereInput
-    data: XOR<IncidentUpdateManyMutationInput, IncidentUncheckedUpdateManyWithoutOwnerInput>
+  export type IncidentEventScalarWhereInput = {
+    AND?: IncidentEventScalarWhereInput | IncidentEventScalarWhereInput[]
+    OR?: IncidentEventScalarWhereInput[]
+    NOT?: IncidentEventScalarWhereInput | IncidentEventScalarWhereInput[]
+    id?: StringFilter<"IncidentEvent"> | string
+    incidentId?: StringFilter<"IncidentEvent"> | string
+    actorId?: StringNullableFilter<"IncidentEvent"> | string | null
+    eventType?: EnumEventTypeFilter<"IncidentEvent"> | $Enums.EventType
+    metadata?: JsonFilter<"IncidentEvent">
+    createdAt?: DateTimeFilter<"IncidentEvent"> | Date | string
   }
 
   export type CommentUpsertWithWhereUniqueWithoutAuthorInput = {
@@ -6558,46 +8078,45 @@ export namespace Prisma {
     incidentId?: StringFilter<"Comment"> | string
     authorId?: StringFilter<"Comment"> | string
     message?: StringFilter<"Comment"> | string
-    type?: EnumCommentTypeFilter<"Comment"> | $Enums.CommentType
     createdAt?: DateTimeFilter<"Comment"> | Date | string
-    editedAt?: DateTimeNullableFilter<"Comment"> | Date | string | null
-    isEdited?: BoolFilter<"Comment"> | boolean
   }
 
   export type IncidentCreateWithoutCommentsInput = {
     id?: string
     title: string
     description: string
-    severity: $Enums.Severity
+    severity?: $Enums.Severity | null
     status?: $Enums.Status
-    slaTargetMinutes?: number | null
-    currentSlaStartAt?: Date | string
     acknowledgedAt?: Date | string | null
     resolvedAt?: Date | string | null
     closedAt?: Date | string | null
+    currentSlaStartAt: Date | string
+    slaTargetMinutes?: number | null
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     owner: UserCreateNestedOneWithoutOwnedIncidentsInput
     createdBy: UserCreateNestedOneWithoutCreatedIncidentsInput
+    events?: IncidentEventCreateNestedManyWithoutIncidentInput
   }
 
   export type IncidentUncheckedCreateWithoutCommentsInput = {
     id?: string
     title: string
     description: string
-    severity: $Enums.Severity
+    severity?: $Enums.Severity | null
     status?: $Enums.Status
-    slaTargetMinutes?: number | null
-    currentSlaStartAt?: Date | string
-    ownerId: string
-    createdById: string
     acknowledgedAt?: Date | string | null
     resolvedAt?: Date | string | null
     closedAt?: Date | string | null
+    currentSlaStartAt: Date | string
+    slaTargetMinutes?: number | null
+    ownerId: string
+    createdById: string
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    events?: IncidentEventUncheckedCreateNestedManyWithoutIncidentInput
   }
 
   export type IncidentCreateOrConnectWithoutCommentsInput = {
@@ -6607,22 +8126,18 @@ export namespace Prisma {
 
   export type UserCreateWithoutCommentsInput = {
     id?: string
-    name?: string | null
-    email: string
     role?: $Enums.Role
-    createdAt?: Date | string
-    createdIncidents?: IncidentCreateNestedManyWithoutCreatedByInput
     ownedIncidents?: IncidentCreateNestedManyWithoutOwnerInput
+    createdIncidents?: IncidentCreateNestedManyWithoutCreatedByInput
+    actedIncidentEvents?: IncidentEventCreateNestedManyWithoutActorInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
     id?: string
-    name?: string | null
-    email: string
     role?: $Enums.Role
-    createdAt?: Date | string
-    createdIncidents?: IncidentUncheckedCreateNestedManyWithoutCreatedByInput
     ownedIncidents?: IncidentUncheckedCreateNestedManyWithoutOwnerInput
+    createdIncidents?: IncidentUncheckedCreateNestedManyWithoutCreatedByInput
+    actedIncidentEvents?: IncidentEventUncheckedCreateNestedManyWithoutActorInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -6645,36 +8160,38 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    severity?: EnumSeverityFieldUpdateOperationsInput | $Enums.Severity
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
-    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     owner?: UserUpdateOneRequiredWithoutOwnedIncidentsNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedIncidentsNestedInput
+    events?: IncidentEventUpdateManyWithoutIncidentNestedInput
   }
 
   export type IncidentUncheckedUpdateWithoutCommentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    severity?: EnumSeverityFieldUpdateOperationsInput | $Enums.Severity
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
-    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    ownerId?: StringFieldUpdateOperationsInput | string
-    createdById?: StringFieldUpdateOperationsInput | string
     acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    events?: IncidentEventUncheckedUpdateManyWithoutIncidentNestedInput
   }
 
   export type UserUpsertWithoutCommentsInput = {
@@ -6690,41 +8207,33 @@ export namespace Prisma {
 
   export type UserUpdateWithoutCommentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdIncidents?: IncidentUpdateManyWithoutCreatedByNestedInput
     ownedIncidents?: IncidentUpdateManyWithoutOwnerNestedInput
+    createdIncidents?: IncidentUpdateManyWithoutCreatedByNestedInput
+    actedIncidentEvents?: IncidentEventUpdateManyWithoutActorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdIncidents?: IncidentUncheckedUpdateManyWithoutCreatedByNestedInput
     ownedIncidents?: IncidentUncheckedUpdateManyWithoutOwnerNestedInput
+    createdIncidents?: IncidentUncheckedUpdateManyWithoutCreatedByNestedInput
+    actedIncidentEvents?: IncidentEventUncheckedUpdateManyWithoutActorNestedInput
   }
 
   export type UserCreateWithoutOwnedIncidentsInput = {
     id?: string
-    name?: string | null
-    email: string
     role?: $Enums.Role
-    createdAt?: Date | string
     createdIncidents?: IncidentCreateNestedManyWithoutCreatedByInput
+    actedIncidentEvents?: IncidentEventCreateNestedManyWithoutActorInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutOwnedIncidentsInput = {
     id?: string
-    name?: string | null
-    email: string
     role?: $Enums.Role
-    createdAt?: Date | string
     createdIncidents?: IncidentUncheckedCreateNestedManyWithoutCreatedByInput
+    actedIncidentEvents?: IncidentEventUncheckedCreateNestedManyWithoutActorInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
   }
 
@@ -6735,21 +8244,17 @@ export namespace Prisma {
 
   export type UserCreateWithoutCreatedIncidentsInput = {
     id?: string
-    name?: string | null
-    email: string
     role?: $Enums.Role
-    createdAt?: Date | string
     ownedIncidents?: IncidentCreateNestedManyWithoutOwnerInput
+    actedIncidentEvents?: IncidentEventCreateNestedManyWithoutActorInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutCreatedIncidentsInput = {
     id?: string
-    name?: string | null
-    email: string
     role?: $Enums.Role
-    createdAt?: Date | string
     ownedIncidents?: IncidentUncheckedCreateNestedManyWithoutOwnerInput
+    actedIncidentEvents?: IncidentEventUncheckedCreateNestedManyWithoutActorInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
   }
 
@@ -6761,10 +8266,7 @@ export namespace Prisma {
   export type CommentCreateWithoutIncidentInput = {
     id?: string
     message: string
-    type?: $Enums.CommentType
     createdAt?: Date | string
-    editedAt?: Date | string | null
-    isEdited?: boolean
     author: UserCreateNestedOneWithoutCommentsInput
   }
 
@@ -6772,10 +8274,7 @@ export namespace Prisma {
     id?: string
     authorId: string
     message: string
-    type?: $Enums.CommentType
     createdAt?: Date | string
-    editedAt?: Date | string | null
-    isEdited?: boolean
   }
 
   export type CommentCreateOrConnectWithoutIncidentInput = {
@@ -6785,6 +8284,32 @@ export namespace Prisma {
 
   export type CommentCreateManyIncidentInputEnvelope = {
     data: CommentCreateManyIncidentInput | CommentCreateManyIncidentInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type IncidentEventCreateWithoutIncidentInput = {
+    id?: string
+    eventType: $Enums.EventType
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    actor?: UserCreateNestedOneWithoutActedIncidentEventsInput
+  }
+
+  export type IncidentEventUncheckedCreateWithoutIncidentInput = {
+    id?: string
+    actorId?: string | null
+    eventType: $Enums.EventType
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type IncidentEventCreateOrConnectWithoutIncidentInput = {
+    where: IncidentEventWhereUniqueInput
+    create: XOR<IncidentEventCreateWithoutIncidentInput, IncidentEventUncheckedCreateWithoutIncidentInput>
+  }
+
+  export type IncidentEventCreateManyIncidentInputEnvelope = {
+    data: IncidentEventCreateManyIncidentInput | IncidentEventCreateManyIncidentInput[]
     skipDuplicates?: boolean
   }
 
@@ -6801,21 +8326,17 @@ export namespace Prisma {
 
   export type UserUpdateWithoutOwnedIncidentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdIncidents?: IncidentUpdateManyWithoutCreatedByNestedInput
+    actedIncidentEvents?: IncidentEventUpdateManyWithoutActorNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOwnedIncidentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdIncidents?: IncidentUncheckedUpdateManyWithoutCreatedByNestedInput
+    actedIncidentEvents?: IncidentEventUncheckedUpdateManyWithoutActorNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
@@ -6832,21 +8353,17 @@ export namespace Prisma {
 
   export type UserUpdateWithoutCreatedIncidentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownedIncidents?: IncidentUpdateManyWithoutOwnerNestedInput
+    actedIncidentEvents?: IncidentEventUpdateManyWithoutActorNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedIncidentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownedIncidents?: IncidentUncheckedUpdateManyWithoutOwnerNestedInput
+    actedIncidentEvents?: IncidentEventUncheckedUpdateManyWithoutActorNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
@@ -6866,163 +8383,349 @@ export namespace Prisma {
     data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyWithoutIncidentInput>
   }
 
-  export type IncidentCreateManyCreatedByInput = {
+  export type IncidentEventUpsertWithWhereUniqueWithoutIncidentInput = {
+    where: IncidentEventWhereUniqueInput
+    update: XOR<IncidentEventUpdateWithoutIncidentInput, IncidentEventUncheckedUpdateWithoutIncidentInput>
+    create: XOR<IncidentEventCreateWithoutIncidentInput, IncidentEventUncheckedCreateWithoutIncidentInput>
+  }
+
+  export type IncidentEventUpdateWithWhereUniqueWithoutIncidentInput = {
+    where: IncidentEventWhereUniqueInput
+    data: XOR<IncidentEventUpdateWithoutIncidentInput, IncidentEventUncheckedUpdateWithoutIncidentInput>
+  }
+
+  export type IncidentEventUpdateManyWithWhereWithoutIncidentInput = {
+    where: IncidentEventScalarWhereInput
+    data: XOR<IncidentEventUpdateManyMutationInput, IncidentEventUncheckedUpdateManyWithoutIncidentInput>
+  }
+
+  export type IncidentCreateWithoutEventsInput = {
     id?: string
     title: string
     description: string
-    severity: $Enums.Severity
+    severity?: $Enums.Severity | null
     status?: $Enums.Status
-    slaTargetMinutes?: number | null
-    currentSlaStartAt?: Date | string
-    ownerId: string
     acknowledgedAt?: Date | string | null
     resolvedAt?: Date | string | null
     closedAt?: Date | string | null
+    currentSlaStartAt: Date | string
+    slaTargetMinutes?: number | null
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    owner: UserCreateNestedOneWithoutOwnedIncidentsInput
+    createdBy: UserCreateNestedOneWithoutCreatedIncidentsInput
+    comments?: CommentCreateNestedManyWithoutIncidentInput
+  }
+
+  export type IncidentUncheckedCreateWithoutEventsInput = {
+    id?: string
+    title: string
+    description: string
+    severity?: $Enums.Severity | null
+    status?: $Enums.Status
+    acknowledgedAt?: Date | string | null
+    resolvedAt?: Date | string | null
+    closedAt?: Date | string | null
+    currentSlaStartAt: Date | string
+    slaTargetMinutes?: number | null
+    ownerId: string
+    createdById: string
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    comments?: CommentUncheckedCreateNestedManyWithoutIncidentInput
+  }
+
+  export type IncidentCreateOrConnectWithoutEventsInput = {
+    where: IncidentWhereUniqueInput
+    create: XOR<IncidentCreateWithoutEventsInput, IncidentUncheckedCreateWithoutEventsInput>
+  }
+
+  export type UserCreateWithoutActedIncidentEventsInput = {
+    id?: string
+    role?: $Enums.Role
+    ownedIncidents?: IncidentCreateNestedManyWithoutOwnerInput
+    createdIncidents?: IncidentCreateNestedManyWithoutCreatedByInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutActedIncidentEventsInput = {
+    id?: string
+    role?: $Enums.Role
+    ownedIncidents?: IncidentUncheckedCreateNestedManyWithoutOwnerInput
+    createdIncidents?: IncidentUncheckedCreateNestedManyWithoutCreatedByInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutActedIncidentEventsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutActedIncidentEventsInput, UserUncheckedCreateWithoutActedIncidentEventsInput>
+  }
+
+  export type IncidentUpsertWithoutEventsInput = {
+    update: XOR<IncidentUpdateWithoutEventsInput, IncidentUncheckedUpdateWithoutEventsInput>
+    create: XOR<IncidentCreateWithoutEventsInput, IncidentUncheckedCreateWithoutEventsInput>
+    where?: IncidentWhereInput
+  }
+
+  export type IncidentUpdateToOneWithWhereWithoutEventsInput = {
+    where?: IncidentWhereInput
+    data: XOR<IncidentUpdateWithoutEventsInput, IncidentUncheckedUpdateWithoutEventsInput>
+  }
+
+  export type IncidentUpdateWithoutEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneRequiredWithoutOwnedIncidentsNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutCreatedIncidentsNestedInput
+    comments?: CommentUpdateManyWithoutIncidentNestedInput
+  }
+
+  export type IncidentUncheckedUpdateWithoutEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    comments?: CommentUncheckedUpdateManyWithoutIncidentNestedInput
+  }
+
+  export type UserUpsertWithoutActedIncidentEventsInput = {
+    update: XOR<UserUpdateWithoutActedIncidentEventsInput, UserUncheckedUpdateWithoutActedIncidentEventsInput>
+    create: XOR<UserCreateWithoutActedIncidentEventsInput, UserUncheckedCreateWithoutActedIncidentEventsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutActedIncidentEventsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutActedIncidentEventsInput, UserUncheckedUpdateWithoutActedIncidentEventsInput>
+  }
+
+  export type UserUpdateWithoutActedIncidentEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ownedIncidents?: IncidentUpdateManyWithoutOwnerNestedInput
+    createdIncidents?: IncidentUpdateManyWithoutCreatedByNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutActedIncidentEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    ownedIncidents?: IncidentUncheckedUpdateManyWithoutOwnerNestedInput
+    createdIncidents?: IncidentUncheckedUpdateManyWithoutCreatedByNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type IncidentCreateManyOwnerInput = {
     id?: string
     title: string
     description: string
-    severity: $Enums.Severity
+    severity?: $Enums.Severity | null
     status?: $Enums.Status
-    slaTargetMinutes?: number | null
-    currentSlaStartAt?: Date | string
-    createdById: string
     acknowledgedAt?: Date | string | null
     resolvedAt?: Date | string | null
     closedAt?: Date | string | null
+    currentSlaStartAt: Date | string
+    slaTargetMinutes?: number | null
+    createdById: string
     version?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type IncidentCreateManyCreatedByInput = {
+    id?: string
+    title: string
+    description: string
+    severity?: $Enums.Severity | null
+    status?: $Enums.Status
+    acknowledgedAt?: Date | string | null
+    resolvedAt?: Date | string | null
+    closedAt?: Date | string | null
+    currentSlaStartAt: Date | string
+    slaTargetMinutes?: number | null
+    ownerId: string
+    version?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IncidentEventCreateManyActorInput = {
+    id?: string
+    incidentId: string
+    eventType: $Enums.EventType
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
   }
 
   export type CommentCreateManyAuthorInput = {
     id?: string
     incidentId: string
     message: string
-    type?: $Enums.CommentType
     createdAt?: Date | string
-    editedAt?: Date | string | null
-    isEdited?: boolean
-  }
-
-  export type IncidentUpdateWithoutCreatedByInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    severity?: EnumSeverityFieldUpdateOperationsInput | $Enums.Severity
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
-    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    version?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    owner?: UserUpdateOneRequiredWithoutOwnedIncidentsNestedInput
-    comments?: CommentUpdateManyWithoutIncidentNestedInput
-  }
-
-  export type IncidentUncheckedUpdateWithoutCreatedByInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    severity?: EnumSeverityFieldUpdateOperationsInput | $Enums.Severity
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
-    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    ownerId?: StringFieldUpdateOperationsInput | string
-    acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    version?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    comments?: CommentUncheckedUpdateManyWithoutIncidentNestedInput
-  }
-
-  export type IncidentUncheckedUpdateManyWithoutCreatedByInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    severity?: EnumSeverityFieldUpdateOperationsInput | $Enums.Severity
-    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
-    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    ownerId?: StringFieldUpdateOperationsInput | string
-    acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    version?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IncidentUpdateWithoutOwnerInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    severity?: EnumSeverityFieldUpdateOperationsInput | $Enums.Severity
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
-    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutCreatedIncidentsNestedInput
     comments?: CommentUpdateManyWithoutIncidentNestedInput
+    events?: IncidentEventUpdateManyWithoutIncidentNestedInput
   }
 
   export type IncidentUncheckedUpdateWithoutOwnerInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    severity?: EnumSeverityFieldUpdateOperationsInput | $Enums.Severity
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
-    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdById?: StringFieldUpdateOperationsInput | string
     acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    createdById?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUncheckedUpdateManyWithoutIncidentNestedInput
+    events?: IncidentEventUncheckedUpdateManyWithoutIncidentNestedInput
   }
 
   export type IncidentUncheckedUpdateManyWithoutOwnerInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    severity?: EnumSeverityFieldUpdateOperationsInput | $Enums.Severity
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
-    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
-    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdById?: StringFieldUpdateOperationsInput | string
     acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    createdById?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type IncidentUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneRequiredWithoutOwnedIncidentsNestedInput
+    comments?: CommentUpdateManyWithoutIncidentNestedInput
+    events?: IncidentEventUpdateManyWithoutIncidentNestedInput
+  }
+
+  export type IncidentUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    comments?: CommentUncheckedUpdateManyWithoutIncidentNestedInput
+    events?: IncidentEventUncheckedUpdateManyWithoutIncidentNestedInput
+  }
+
+  export type IncidentUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    severity?: NullableEnumSeverityFieldUpdateOperationsInput | $Enums.Severity | null
+    status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
+    acknowledgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentSlaStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slaTargetMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    version?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IncidentEventUpdateWithoutActorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    eventType?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    incident?: IncidentUpdateOneRequiredWithoutEventsNestedInput
+  }
+
+  export type IncidentEventUncheckedUpdateWithoutActorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    incidentId?: StringFieldUpdateOperationsInput | string
+    eventType?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IncidentEventUncheckedUpdateManyWithoutActorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    incidentId?: StringFieldUpdateOperationsInput | string
+    eventType?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type CommentUpdateWithoutAuthorInput = {
     id?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
-    type?: EnumCommentTypeFieldUpdateOperationsInput | $Enums.CommentType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    editedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    isEdited?: BoolFieldUpdateOperationsInput | boolean
     incident?: IncidentUpdateOneRequiredWithoutCommentsNestedInput
   }
 
@@ -7030,39 +8733,35 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     incidentId?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
-    type?: EnumCommentTypeFieldUpdateOperationsInput | $Enums.CommentType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    editedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    isEdited?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type CommentUncheckedUpdateManyWithoutAuthorInput = {
     id?: StringFieldUpdateOperationsInput | string
     incidentId?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
-    type?: EnumCommentTypeFieldUpdateOperationsInput | $Enums.CommentType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    editedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    isEdited?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type CommentCreateManyIncidentInput = {
     id?: string
     authorId: string
     message: string
-    type?: $Enums.CommentType
     createdAt?: Date | string
-    editedAt?: Date | string | null
-    isEdited?: boolean
+  }
+
+  export type IncidentEventCreateManyIncidentInput = {
+    id?: string
+    actorId?: string | null
+    eventType: $Enums.EventType
+    metadata: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
   }
 
   export type CommentUpdateWithoutIncidentInput = {
     id?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
-    type?: EnumCommentTypeFieldUpdateOperationsInput | $Enums.CommentType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    editedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    isEdited?: BoolFieldUpdateOperationsInput | boolean
     author?: UserUpdateOneRequiredWithoutCommentsNestedInput
   }
 
@@ -7070,20 +8769,38 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     authorId?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
-    type?: EnumCommentTypeFieldUpdateOperationsInput | $Enums.CommentType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    editedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    isEdited?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type CommentUncheckedUpdateManyWithoutIncidentInput = {
     id?: StringFieldUpdateOperationsInput | string
     authorId?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
-    type?: EnumCommentTypeFieldUpdateOperationsInput | $Enums.CommentType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    editedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    isEdited?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type IncidentEventUpdateWithoutIncidentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    eventType?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    actor?: UserUpdateOneWithoutActedIncidentEventsNestedInput
+  }
+
+  export type IncidentEventUncheckedUpdateWithoutIncidentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IncidentEventUncheckedUpdateManyWithoutIncidentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actorId?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+    metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 
