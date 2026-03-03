@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  // output   = "./app/generated/prisma"
 }
 
 datasource db {
@@ -15,8 +15,8 @@ datasource db {
 
 // User model
 model User {
-  id String @id @default(uuid())
-  role      Role      @default(MEMBER)
+  id                  String          @id @default(uuid())
+  role                Role            @default(MEMBER)
   ownedIncidents      Incident[]      @relation("IncidentOwner")
   createdIncidents    Incident[]      @relation("IncidentCreator")
   actedIncidentEvents IncidentEvent[] @relation("IncidentEventActor")
@@ -45,8 +45,8 @@ model Incident {
   title       String
   description String
 
-  severity    Severity?
-  status      Status     @default(OPEN)
+  severity Severity?
+  status   Status    @default(OPEN)
 
   acknowledgedAt    DateTime?
   resolvedAt        DateTime?
@@ -54,8 +54,8 @@ model Incident {
   currentSlaStartAt DateTime
   slaTargetMinutes  Int?
 
-  ownerId     String
-  owner       User   @relation("IncidentOwner", fields: [ownerId], references: [id])
+  ownerId String
+  owner   User   @relation("IncidentOwner", fields: [ownerId], references: [id])
 
   createdById String
   createdBy   User   @relation("IncidentCreator", fields: [createdById], references: [id])
@@ -63,7 +63,7 @@ model Incident {
   comments Comment[]
   events   IncidentEvent[]
 
-  version  Int       @default(1)
+  version Int @default(1)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

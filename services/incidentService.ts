@@ -1,12 +1,12 @@
 import { prisma } from "@/lib/prisma";
-import { EventType, Severity, Status, Role } from "@/generated/prisma";
+import { EventType, Severity, Status, Role } from "@prisma/client";
 
-function buildStatusMessage(from: Status, to: Status) {
-    if ((from === Status.RESOLVED || from === Status.CLOSED) && to === Status.INVESTIGATING) {
-        return `Incident reopened (from ${from} to ${to})`;
-    }
-    return `Status changed from ${from} to ${to}`;
-}
+// function buildStatusMessage(from: Status, to: Status) {
+//     if ((from === Status.RESOLVED || from === Status.CLOSED) && to === Status.INVESTIGATING) {
+//         return `Incident reopened (from ${from} to ${to})`;
+//     }
+//     return `Status changed from ${from} to ${to}`;
+// }
 
 
 type CreateIncidentInput = {
@@ -23,12 +23,12 @@ type UpdateStatusInput = {
   userId: string;
 };
 
-const SLA_MAP: Record<Severity, number> = {
-    LOW: 240,
-    MEDIUM: 120,
-    HIGH: 60,
-    CRITICAL: 15,
-};
+// const SLA_MAP: Record<Severity, number> = {
+//     LOW: 240,
+//     MEDIUM: 120,
+//     HIGH: 60,
+//     CRITICAL: 15,
+// };
 
 
 
@@ -159,7 +159,7 @@ export const updateStatus = async (input: UpdateStatusInput) => {
 
     }
 
-    const message = buildStatusMessage(currentStatus, newStatus);
+    // const message = buildStatusMessage(currentStatus, newStatus);
 
     const [updatedIncident] = await prisma.$transaction([
         prisma.incident.update({
@@ -323,3 +323,4 @@ export const changeSeverity = async (input: changeSeverityInput) => {
     ]);
     return updatedIncident;
 }
+
